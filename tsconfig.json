@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "amd",
+    "rootDir": "./src/",
+    "sourceRoot": "./src/",
+   // "outFile": "ui.js",
+    "target": "es5",
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

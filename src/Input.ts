@@ -1,0 +1,94 @@
+import {Component} from "./Component";
+import {Random} from "./Random";
+// @ts-ignore
+declare let $: jQuery;
+
+export class Input implements Component {
+
+    private readonly name: string;
+    private readonly type: string;
+    private readonly value: any;
+    private readonly placeholder: string;
+    private readonly random: string;
+
+
+    private isLoaded: boolean = false;
+
+    private callBacks: { (value: any): void; }[] = [];
+    private html: string;
+
+
+    constructor(name: string, type: string, value: any, placeholder: string) {
+        this.name = name;
+        this.type = type;
+        this.value = value;
+        this.placeholder = placeholder;
+        this.random = new Random(20).get();
+    }
+
+    /**
+     * add a callback action to this input
+     * @param {() => void}callback
+     */
+    public onChange(callback) {
+        this.callBacks.push(callback)
+    };
+
+    getHtml(): string {
+        if (this.type === "boolean") {
+            let stringBuilder = "";
+            stringBuilder += "<select id='" + this.random + "'>";
+            if (!this.value) {
+                stringBuilder += "<option value=\"false\">No</option>";
+                stringBuilder += "<option value=\"true\">Yes</option>";
+            } else {
+                stringBuilder += "<option value=\"true\">Yes</option>";
+                stringBuilder += "<option value=\"false\">No</option>";
+            }
+            stringBuilder += "</select>";
+            this.html = stringBuilder;
+            return this.html;
+        } else {
+            let v = this.value;
+            if (typeof this.value === 'undefined') {
+                v = "";
+            }
+            this.html = '<input id="' + this.random + '" name="' + name + '" type="' + this.type + '"  value="' + v + '" placeholder="' + this.placeholder + '">';
+            return this.html;
+        }
+    }
+
+    uICreated(): void {
+        if (!this.isLoaded) {
+            this.isLoaded = true;
+            //do nothing
+
+            let input = $("#" + this.random);
+
+            (function (parent) {
+                input.change(function () {
+                    let value = $(this).val();
+
+                    for (let i = 0; i < parent.callBacks.length; i++) {
+                        switch (parent.type) {
+                            case "boolean":
+                                if (value === "false")
+                                    parent.callBacks[i](false);
+                                else
+                                    parent.callBacks[i](false);
+                                break;
+                            case "number":
+                                parent.callBacks[i](Number(value));
+                                break;
+                            default:
+                                parent.callBacks[i](value);
+                                break;
+                        }
+
+                    }
+                });
+            })(this);
+        }
+    }
+
+}
