@@ -3,7 +3,7 @@ import {Component} from "./Component";
 import {Random} from "./Random";
 
 // @ts-ignore
-let $: jQuery = require("$");
+let $: jQuery = require("jquery");
 
 
 export class Button implements Component {

@@ -1,7 +1,7 @@
 import {Component} from "./Component";
 import {Random} from "./Random";
 // @ts-ignore
-declare let $: jQuery;
+let $: jQuery = require("jquery");
 
 
 export class Popup implements Component {

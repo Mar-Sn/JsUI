@@ -3,7 +3,7 @@ import {Random} from "./Random";
 import {Input} from "./Input";
 
 // @ts-ignore
-declare let $: jQuery;
+let $: jQuery = require("jquery");
 
 export class FieldSetInput implements Component {
 
@@ -18,7 +18,7 @@ export class FieldSetInput implements Component {
 
     private currentValue: any;
 
-    private child: Component;
+    private child: Input;
 
     constructor(name: string, type: string, value: string, description: string, classes: string, placeholder: string) {
         this.name = name;
@@ -48,6 +48,9 @@ export class FieldSetInput implements Component {
         this.child.uICreated();
     }
 
+    public onChange(callback: (any:any) => void){
+        this.child.onChange(callback);
+    }
 
     /**
      * Get the value of field

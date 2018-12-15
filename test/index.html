@@ -3,23 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Test</title>
-    <script type="application/javascript" src="/lib/require.js"></script>
+    <script type="application/javascript" src="/lib/requirejs.js"></script>
     <script>
         require.config({
             baseUrl: 'lib',
             paths: {
-                jquery: 'https://code.jquery.com/jquery-3.3.1.min.js',
+                jquery: 'jquery.min',
                 Random:  'Random',
                 Popup:  'Popup',
                 Input:  'Input',
-                InputField:  'InputField',
+                FieldSetInput:  'FieldSetInput',
                 Button:  'Button',
                 Table:  'Table',
                 Panel:  'Panel',
             }
         });
-        require(['jquery'], function ($, ) {
+        require(['jquery','Popup', 'Panel', 'FieldSetInput'], function ($, Popup, Panel, FieldSetInput) {
+            var popup = new Popup.Popup("test",function(){
+               //onclose
+               alert("popup closed");
+            });
+            var panel = new Panel.Panel("Panel1", "classes test");
 
+            var input = new FieldSetInput.FieldSetInput('name', 'text', '', 'simple description', 'some classes', '');
+            input.onChange(function(data){
+                console.log(data);
+            });
+            panel.append(input);
+
+
+            popup.append(panel);
+            popup.show();
         });
     </script>
 </head>

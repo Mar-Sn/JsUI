@@ -4,7 +4,7 @@ import {Random} from "./Random";
 import {Input} from "./Input";
 
 // @ts-ignore
-declare let $: jQuery;
+let $: jQuery = require("jquery");
 
 export class Table implements Component {
     private readonly headers: string[];

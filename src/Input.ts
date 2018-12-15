@@ -1,7 +1,7 @@
 import {Component} from "./Component";
 import {Random} from "./Random";
 // @ts-ignore
-declare let $: jQuery;
+let $: jQuery = require("jquery");
 
 export class Input implements Component {
 
@@ -66,27 +66,36 @@ export class Input implements Component {
             let input = $("#" + this.random);
 
             (function (parent) {
-                input.change(function () {
-                    let value = $(this).val();
+                if (parent.type !== "boolean") {
+                    input.on("keydown", function search(e) {
+                        let value = $(this).val();
+                        for (let i = 0; i < parent.callBacks.length; i++) {
+                            switch (parent.type) {
+                                case "number":
+                                    parent.callBacks[i](Number(value));
+                                    break;
+                                case "text":
+                                    parent.callBacks[i](value);
+                                    break;
+                                default:
+                                    parent.callBacks[i](value);
+                                    break;
+                            }
 
-                    for (let i = 0; i < parent.callBacks.length; i++) {
-                        switch (parent.type) {
-                            case "boolean":
-                                if (value === "false")
-                                    parent.callBacks[i](false);
-                                else
-                                    parent.callBacks[i](false);
-                                break;
-                            case "number":
-                                parent.callBacks[i](Number(value));
-                                break;
-                            default:
-                                parent.callBacks[i](value);
-                                break;
                         }
+                    });
+                } else {
+                    input.change(function () {
+                        let value = $(this).val();
 
-                    }
-                });
+                        for (let i = 0; i < parent.callBacks.length; i++) {
+                            if (value === "false")
+                                parent.callBacks[i](false);
+                            else
+                                parent.callBacks[i](false);
+                        }
+                    });
+                }
             })(this);
         }
     }
