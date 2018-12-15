@@ -5,8 +5,10 @@ const tsProject = ts.createProject('tsconfig.json');
 const uglify = require('gulp-uglify');
 const pump = require('pump');
 const rename = require("gulp-rename");
+const connect = require('gulp-connect');
 
-gulp.task('scripts', function() {
+
+gulp.task('scripts', function(done) {
     gulp.src("src/**/*.ts") // or tsProject.src()
         .pipe(tsProject())
         .pipe(gulp.dest('target'));
@@ -14,7 +16,7 @@ gulp.task('scripts', function() {
     gulp.src("target/*.js")
         .pipe(gulp.dest('test/lib'));
 
-    return true;
+    done();
 });
 
 gulp.task('ugly', function (cb) {
@@ -27,3 +29,20 @@ gulp.task('ugly', function (cb) {
         cb
     );
 });
+
+gulp.task('connect', function() {
+    connect.server({
+        root: './test/',
+        livereload: true
+    })
+});
+
+
+gulp.task('watch', function() {
+    gulp.watch('src/**/*.ts', gulp.series('scripts'));
+    gulp.watch('src/**/*.ts', gulp.series('ugly'));
+});
+
+
+gulp.task('default', gulp.series(['scripts', 'ugly']));
+gulp.task('server', gulp.parallel(['connect', 'watch']));
