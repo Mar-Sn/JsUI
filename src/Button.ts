@@ -8,20 +8,16 @@ let $: jQuery = require("jquery");
 
 export class Button implements Component {
     // @ts-ignore
-    private $: jQuery = null;
-
     private readonly random: string;
     private readonly html: string;
     private callback: () => void;
 
     /**
      *
-     * @param {jQuery} jQuery
      * @param classes
      * @param callback
      */
-    constructor(jQuery, classes, callback) {
-        this.$ = jQuery;
+    constructor(classes, callback) {
         this.callback = callback;
         this.random = new Random(20).get();
 
