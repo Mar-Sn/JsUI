@@ -1,6 +1,6 @@
-import {Component} from "./Component";
-import {Random} from "./Random";
-import {Input} from "./Input";
+import {Component} from "Component";
+import {Random} from "Random";
+import {Input} from "Input";
 
 // @ts-ignore
 let $: jQuery = require("jquery");

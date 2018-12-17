@@ -1,5 +1,5 @@
-import {Component} from "./Component";
-import {Random} from "./Random";
+import {Component} from "Component";
+import {Random} from "Random";
 
 export class Panel implements Component {
     private readonly title: string;

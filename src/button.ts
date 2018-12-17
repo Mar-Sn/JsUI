@@ -1,10 +1,10 @@
-///<reference path="Random.ts"/>
-import {Component} from "./Component";
-import {Random} from "./Random";
+// @ts-ignore
+import {Component} from "Component";
+// @ts-ignore
+import {Random} from "Random";
 
 // @ts-ignore
 let $: jQuery = require("jquery");
-
 
 export class Button implements Component {
     // @ts-ignore
