@@ -66,9 +66,20 @@ export class Input implements Component {
             let input = $("#" + this.random);
 
             (function (parent) {
-                if (parent.type !== "boolean") {
-                    input.on("keydown", function search(e) {
+                if (parent.type === "boolean") {
+                    input.change(function () {
                         let value = $(this).val();
+
+                        for (let i = 0; i < parent.callBacks.length; i++) {
+                            if (value === "false")
+                                parent.callBacks[i](false);
+                            else
+                                parent.callBacks[i](false);
+                        }
+                    });
+                } else {
+                    input.keypress(function(event){
+                        let value = $(this).val() + String.fromCharCode(event.which);
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             switch (parent.type) {
                                 case "number":
@@ -82,17 +93,6 @@ export class Input implements Component {
                                     break;
                             }
 
-                        }
-                    });
-                } else {
-                    input.change(function () {
-                        let value = $(this).val();
-
-                        for (let i = 0; i < parent.callBacks.length; i++) {
-                            if (value === "false")
-                                parent.callBacks[i](false);
-                            else
-                                parent.callBacks[i](false);
                         }
                     });
                 }
