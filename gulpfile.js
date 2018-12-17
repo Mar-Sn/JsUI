@@ -13,6 +13,9 @@ gulp.task('scripts', function(done) {
         .pipe(tsProject())
         .pipe(gulp.dest('target'));
 
+    gulp.src("node_modules/table-dragger/dist/**/*.js") // or tsProject.src()
+        .pipe(gulp.dest('target'));
+
     gulp.src("target/*.js")
         .pipe(gulp.dest('test/lib'));
 
@@ -40,9 +43,9 @@ gulp.task('connect', function() {
 
 gulp.task('watch', function() {
     gulp.watch('src/**/*.ts', gulp.series('scripts'));
-    gulp.watch('src/**/*.ts', gulp.series('ugly'));
+    //gulp.watch('src/**/*.ts', gulp.series('ugly'));
 });
 
 
-gulp.task('default', gulp.series(['scripts', 'ugly']));
+//gulp.task('default', gulp.series(['scripts', 'ugly']));
 gulp.task('server', gulp.parallel(['connect', 'watch']));
