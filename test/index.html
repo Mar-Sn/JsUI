@@ -18,14 +18,15 @@
                 Panel:  'panel',
                 Component:  'component',
                 TableComponent:  'table_compontent',
+                Draggable:  'table-dragger.min',
             }
         });
-        require(['jquery','Popup', 'Panel', 'FieldSetInput'], function ($, Popup, Panel, FieldSetInput) {
+        require(['jquery','Popup', 'Panel', 'FieldSetInput', 'Table'], function ($, Popup, Panel, FieldSetInput, Table) {
             var popup = new Popup.Popup("test",function(){
                //onclose
                alert("popup closed");
             });
-            var panel = new Panel.Panel("Panel1", "classes test");
+            var panel = new Panel.Panel("Panel1", "input test");
 
             var input = new FieldSetInput.FieldSetInput('name', 'text', '', 'simple description', 'some classes', '');
             input.onChange(function(data){
@@ -33,8 +34,46 @@
             });
             panel.append(input);
 
+            var panel1 = new Panel.Panel("Panel2", "table test");
+
+            var table = new Table.Table([
+                "text",
+                "number",
+                "date",
+                "boolean",
+                "text sub",
+                "number sub",
+                "boolean sub",
+            ], "");
+            
+            var object = {sub:{}};
+
+            
+            table.addRows([[
+                {type:"text", key: 'name', value: object.name, mappedValue: object},
+                {type:"number", key: 'number', value: object.number, mappedValue: object},
+                {type:"date", key: 'date', value: object.date, mappedValue: object},
+                {type:"boolean", key: 'boolean', value: object.boolean, mappedValue: object},
+
+                {type:"text", key: 'name', value: object.sub.name, mappedValue: object.sub},
+                {type:"number", key: 'number', value: object.sub.number, mappedValue: object.sub},
+                {type:"date", key: 'date', value: object.sub.date, mappedValue: object.sub},
+                {type:"boolean", key: 'boolean', value: object.sub.boolean, mappedValue: object.sub},
+            ],[
+                {type:"text", key: 'name', value: object.name, mappedValue: object},
+                {type:"number", key: 'number', value: object.number, mappedValue: object},
+                {type:"date", key: 'date', value: object.date, mappedValue: object},
+                {type:"boolean", key: 'boolean', value: object.boolean, mappedValue: object},
+
+                {type:"text", key: 'name', value: object.sub.name, mappedValue: object.sub},
+                {type:"number", key: 'number', value: object.sub.number, mappedValue: object.sub},
+                {type:"date", key: 'date', value: object.sub.date, mappedValue: object.sub},
+                {type:"boolean", key: 'boolean', value: object.sub.boolean, mappedValue: object.sub},
+            ]]);
+            panel1.set(table);
 
             popup.append(panel);
+            popup.append(panel1);
             popup.show();
         });
     </script>
