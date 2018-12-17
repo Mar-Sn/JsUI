@@ -5,6 +5,9 @@ import {Random} from "Random";
 import {Input} from "Input";
 
 // @ts-ignore
+import {Draggable} from "Draggable";
+
+// @ts-ignore
 let $: jQuery = require("jquery");
 
 export class Table implements Component {
@@ -27,7 +30,6 @@ export class Table implements Component {
         this.headers = headers;
         this.classes = classes;
         this.random = new Random(20).get();
-        this.draggerLib = dragger;
     }
 
     /**
@@ -128,7 +130,10 @@ export class Table implements Component {
         return "<th>" + header + "</th>";
     }
 
-    private getHeaders() {
+    /**
+     * @private
+     */
+    private getHeaders():string {
         if (this.headers.length > 0) {
             let total = "<tr>";
             this.headers.forEach(header => {
@@ -149,11 +154,19 @@ export class Table implements Component {
         return total;
     }
 
-    private setDragable() {
+    private setDraggable() {
         if (this.isloaded && this.rows.length > 0) {
             let el = document.getElementById(this.random);
 
-            this.dragger = this.draggerLib(el, {
+            try{
+                let ___ignore = Draggable;
+            }finally {
+
+            }
+            // @ts-ignore
+            let d = require("Draggable");
+
+            this.dragger = d(el, {
                 mode: 'row',
                 dragHandler: '.handle',
                 onlyBody: true,
@@ -182,7 +195,7 @@ export class Table implements Component {
                     child.uICreated();
                 });
             }
-            this.setDragable();
+            this.setDraggable();
         }
     };
 
@@ -209,7 +222,7 @@ export class Table implements Component {
     uICreated(): void {
         if (!this.isloaded) {
             this.isloaded = true;
-            this.setDragable();
+            this.setDraggable();
             this.childs.forEach(child => {
                 child.uICreated();
             });
