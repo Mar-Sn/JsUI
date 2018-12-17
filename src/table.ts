@@ -20,7 +20,10 @@ export class Table implements Component {
     private html: string;
 
 
-    constructor(headers: string[], classes: string, dragger: any) {
+    constructor(headers: string[], classes: string) {
+        if(!Array.isArray(headers)){
+            throw "Table arg1 -> headers should be an array!";
+        }
         this.headers = headers;
         this.classes = classes;
         this.random = new Random(20).get();
