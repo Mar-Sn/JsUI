@@ -52,6 +52,8 @@ export class Table implements Component {
             }
             total += "</tr>";
             return total
+        }else{
+            return "";
         }
     };
 
@@ -134,6 +136,8 @@ export class Table implements Component {
             });
             total += "</tr>";
             return total
+        }else{
+            return "";
         }
     }
 
