@@ -12,13 +12,17 @@ export class Button implements Component {
     private readonly html: string;
     private callback: () => void;
 
+    readonly name: String = "";
+
     /**
      *
+     * @param name
      * @param classes
      * @param callback
      */
-    constructor(classes:string, callback:() => void) {
+    constructor(name: String, classes: string, callback: () => void) {
         this.callback = callback;
+        this.name = name;
         this.random = new Random(20).get();
 
         this.html = "<button id='" + this.random + "' class='" + classes + "'>" + name + "</button>";
@@ -32,7 +36,7 @@ export class Button implements Component {
         (function (parent) {
             $(document).ready(function () {
                 // @ts-ignore
-                $("#" + this._random).click(function () {
+                $("#" + parent.random).click(function () {
                     parent.callback();
                 });
             });

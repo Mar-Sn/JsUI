@@ -75,7 +75,9 @@
 
             var panel2 = new Panel.Panel("Panel3", "table test");
 
-            panel2.set(new Button.Button("test"));
+            panel2.set(new Button.Button("test", '', function(){
+                alert('button works');
+            }));
 
             popup.append(panel);
             popup.append(panel1);
