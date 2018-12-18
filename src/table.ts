@@ -74,6 +74,10 @@ export class Table implements Component {
                 return "<td class='handle'>" + this.getInput(column, "number").getHtml() + "</td>";
             case "date":
                 return "<td class='handle'>" + this.getInput(column, "date").getHtml() + "</td>";
+            case "datetime":
+                return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
+            case "datetime-local":
+                return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
             case "boolean":
                 return "<td class='handle'>" + this.getInput(column, "boolean").getHtml() + "</td>";
             default:
