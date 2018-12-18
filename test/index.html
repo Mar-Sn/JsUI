@@ -19,9 +19,10 @@
                 Component:  'component',
                 TableComponent:  'table_compontent',
                 Draggable:  'table-dragger.min',
+                Moments: 'moment-timezone.min'
             }
         });
-        require(['jquery','Popup', 'Panel', 'FieldSetInput', 'Table'], function ($, Popup, Panel, FieldSetInput, Table) {
+        require(['jquery','Popup', 'Panel', 'FieldSetInput', 'Table', 'Button'], function ($, Popup, Panel, FieldSetInput, Table, Button) {
             var popup = new Popup.Popup("test",function(){
                //onclose
                alert("popup closed");
@@ -52,12 +53,12 @@
             table.addRows([[
                 {type:"text", key: 'name', value: object.name, mappedValue: object},
                 {type:"number", key: 'number', value: object.number, mappedValue: object},
-                {type:"date", key: 'date', value: object.date, mappedValue: object},
+                {type:"datetime", key: 'datetime', value: object.datetime, mappedValue: object},
                 {type:"boolean", key: 'boolean', value: object.boolean, mappedValue: object},
 
                 {type:"text", key: 'name', value: object.sub.name, mappedValue: object.sub},
                 {type:"number", key: 'number', value: object.sub.number, mappedValue: object.sub},
-                {type:"date", key: 'date', value: object.sub.date, mappedValue: object.sub},
+                {type:"datetime", key: 'datetime', value: object.sub.datetime, mappedValue: object.sub},
                 {type:"boolean", key: 'boolean', value: object.sub.boolean, mappedValue: object.sub},
             ],[
                 {type:"text", key: 'name', value: object.name, mappedValue: object},
@@ -72,8 +73,13 @@
             ]]);
             panel1.set(table);
 
+            var panel2 = new Panel.Panel("Panel3", "table test");
+
+            panel2.set(new Button.Button("test"));
+
             popup.append(panel);
             popup.append(panel1);
+            popup.append(panel2);
             popup.show();
         });
     </script>

@@ -16,6 +16,12 @@ gulp.task('scripts', function(done) {
     gulp.src("node_modules/table-dragger/dist/**/*.js") // or tsProject.src()
         .pipe(gulp.dest('target'));
 
+    gulp.src("node_modules/moment-timezone/builds/moment-timezone.min.js")
+        .pipe(gulp.dest('target'));
+
+    gulp.src("node_modules/flatpickr/dist/flatpickr.min.js")
+        .pipe(gulp.dest('target'));
+
     gulp.src("target/*.js")
         .pipe(gulp.dest('test/lib'));
 
