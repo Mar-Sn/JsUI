@@ -9,33 +9,36 @@
             baseUrl: 'lib',
             paths: {
                 jquery: 'jquery.min',
-                Random:  'random',
-                Popup:  'popup',
-                Input:  'input',
-                FieldSetInput:  'fieldset_input',
-                Button:  'button',
-                Table:  'table',
-                Panel:  'panel',
-                Component:  'component',
-                TableComponent:  'table_compontent',
-                Draggable:  'table-dragger.min',
+                Random: 'random',
+                Popup: 'popup',
+                Input: 'input',
+                FieldSetInput: 'fieldset_input',
+                Button: 'button',
+                Table: 'table',
+                Panel: 'panel',
+                Component: 'component',
+                TableComponent: 'table_compontent',
+                Draggable: 'table-dragger.min',
                 Moments: 'moment-timezone.min'
             }
         });
-        require(['jquery','Popup', 'Panel', 'FieldSetInput', 'Table', 'Button'], function ($, Popup, Panel, FieldSetInput, Table, Button) {
-            var popup = new Popup.Popup("test",function(){
-               //onclose
-               alert("popup closed");
+        require(['jquery', 'Popup', 'Panel', 'FieldSetInput', 'Table', 'Button'], function ($, Popup, Panel, FieldSetInput, Table, Button) {
+            var popup = new Popup.Popup("test", function () {
+                //onclose
+                alert("popup closed");
             });
             var panel = new Panel.Panel("Panel1", "input test");
 
             var input = new FieldSetInput.FieldSetInput('name', 'text', '', 'simple description', 'some classes', '');
-            input.onChange(function(data){
+            input.onChange(function (data) {
                 console.log(data);
             });
             panel.append(input);
 
             var panel1 = new Panel.Panel("Panel2", "table test");
+
+
+            var object = [{name: "", sub: {}},{name: "", sub: {}}];
 
             var table = new Table.Table([
                 "text",
@@ -45,37 +48,37 @@
                 "text sub",
                 "number sub",
                 "boolean sub",
-            ], "");
-            
-            var object = {sub:{}};
+            ], "", object);
 
-            
+
+
+
             table.addRows([[
-                {type:"text", key: 'name', value: object.name, mappedValue: object},
-                {type:"number", key: 'number', value: object.number, mappedValue: object},
-                {type:"datetime", key: 'datetime', value: object.datetime, mappedValue: object},
-                {type:"boolean", key: 'boolean', value: object.boolean, mappedValue: object},
+                {type: "text", key: 'name', value: object[0].name, mappedValue: object[0]},
+                {type: "number", key: 'number', value: object[0].number, mappedValue: object[0]},
+                {type: "datetime", key: 'datetime', value: object[0].datetime, mappedValue: object[0]},
+                {type: "boolean", key: 'boolean', value: object[0].boolean, mappedValue: object[0]},
 
-                {type:"text", key: 'name', value: object.sub.name, mappedValue: object.sub},
-                {type:"number", key: 'number', value: object.sub.number, mappedValue: object.sub},
-                {type:"datetime", key: 'datetime', value: object.sub.datetime, mappedValue: object.sub},
-                {type:"boolean", key: 'boolean', value: object.sub.boolean, mappedValue: object.sub},
-            ],[
-                {type:"text", key: 'name', value: object.name, mappedValue: object},
-                {type:"number", key: 'number', value: object.number, mappedValue: object},
-                {type:"date", key: 'date', value: object.date, mappedValue: object},
-                {type:"boolean", key: 'boolean', value: object.boolean, mappedValue: object},
+                {type: "text", key: 'name', value: object[0].sub.name, mappedValue: object[0].sub},
+                {type: "number", key: 'number', value: object[0].sub.number, mappedValue: object[0].sub},
+                {type: "datetime", key: 'datetime', value: object[0].sub.datetime, mappedValue: object[0].sub},
+                {type: "boolean", key: 'boolean', value: object[0].sub.boolean, mappedValue: object[0].sub},
+            ], [
+                {type: "text", key: 'name', value: object[1].name, mappedValue: object[1]},
+                {type: "number", key: 'number', value: object[1].number, mappedValue: object[1]},
+                {type: "date", key: 'date', value: object[1].date, mappedValue: object[1]},
+                {type: "boolean", key: 'boolean', value: object[1].boolean, mappedValue: object[1]},
 
-                {type:"text", key: 'name', value: object.sub.name, mappedValue: object.sub},
-                {type:"number", key: 'number', value: object.sub.number, mappedValue: object.sub},
-                {type:"date", key: 'date', value: object.sub.date, mappedValue: object.sub},
-                {type:"boolean", key: 'boolean', value: object.sub.boolean, mappedValue: object.sub},
+                {type: "text", key: 'name', value: object[1].sub.name, mappedValue: object[1].sub},
+                {type: "number", key: 'number', value: object[1].sub.number, mappedValue: object[1].sub},
+                {type: "date", key: 'date', value: object[1].sub.date, mappedValue: object[1].sub},
+                {type: "boolean", key: 'boolean', value: object[1].sub.boolean, mappedValue: object[1].sub},
             ]]);
             panel1.set(table);
 
             var panel2 = new Panel.Panel("Panel3", "table test");
 
-            panel2.set(new Button.Button("test", '', function(){
+            panel2.set(new Button.Button("test", '', function () {
                 alert('button works');
             }));
 
@@ -83,6 +86,8 @@
             popup.append(panel1);
             popup.append(panel2);
             popup.show();
+
+            window.testObject = object;
         });
     </script>
 </head>

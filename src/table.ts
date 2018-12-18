@@ -6,7 +6,6 @@ import {TableComponent} from "TableCompontent";
 import {Random} from "Random";
 // @ts-ignore
 import {Input} from "Input";
-
 // @ts-ignore
 import {Draggable} from "Draggable";
 
@@ -24,9 +23,12 @@ export class Table implements Component {
     private isloaded: boolean = false;
     private html: string = "";
 
+    private baseArray: [] | undefined;
 
-    constructor(headers: string[], classes: string) {
-        if(!Array.isArray(headers)){
+
+    constructor(headers: string[], classes: string, baseArray: [] | undefined) {
+        this.baseArray = baseArray;
+        if (!Array.isArray(headers)) {
             throw "Table arg1 -> headers should be an array!";
         }
         this.headers = headers;
@@ -56,7 +58,7 @@ export class Table implements Component {
             }
             total += "</tr>";
             return total
-        }else{
+        } else {
             return "";
         }
     };
@@ -140,7 +142,7 @@ export class Table implements Component {
     /**
      * @private
      */
-    private getHeaders():string {
+    private getHeaders(): string {
         if (this.headers.length > 0) {
             let total = "<tr>";
             this.headers.forEach(header => {
@@ -148,7 +150,7 @@ export class Table implements Component {
             });
             total += "</tr>";
             return total
-        }else{
+        } else {
             return "";
         }
     }
@@ -165,10 +167,10 @@ export class Table implements Component {
         if (this.isloaded && this.rows.length > 0) {
             let el = document.getElementById(this.random);
 
-            try{
+            try {
                 //@ts-ignore
                 let ___ignore = Draggable;
-            }finally {
+            } finally {
 
             }
             // @ts-ignore
@@ -180,11 +182,24 @@ export class Table implements Component {
                 onlyBody: true,
                 animation: 300
             });
-            // @ts-ignore
-            this.dragger.on('drop', function (from, to) {
-                console.log(from);
-                console.log(to);
-            });
+            (function (parent: Table) {
+                parent.dragger.on('drop', function (from: number, to: number) {
+                    from--;
+                    to--;
+                    let copyFrom = parent.rows[from];
+                    parent.rows[from] = parent.rows[to];
+                    parent.rows[to] = copyFrom;
+
+                    if(typeof parent.baseArray !== 'undefined'){
+                        let copyFromBase = parent.baseArray[from];
+                        parent.baseArray[from] = parent.baseArray[to];
+                        parent.baseArray[to] = copyFromBase;
+                    }
+                    console.log(from);
+                    console.log(to);
+                });
+            })(this);
+
         }
     }
 
@@ -197,10 +212,10 @@ export class Table implements Component {
         this.rows.push(row);
         let _row = this.getTr(row);
 
-        if (this.isloaded){
+        if (this.isloaded) {
             $("#" + this.random + " tbody").append(_row);
             if (row.length > 0) {
-                this.childs.forEach(child =>{
+                this.childs.forEach(child => {
                     child.uICreated();
                 });
             }
@@ -212,12 +227,11 @@ export class Table implements Component {
      * Add rows to the table
      * @param {TableComponent[][]} rows
      */
-    public addRows(rows: TableComponent[][]){
+    public addRows(rows: TableComponent[][]) {
         rows.forEach(row => {
             this.addRow(row);
         });
     }
-
 
 
     getHtml(): string {
