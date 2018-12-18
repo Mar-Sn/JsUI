@@ -1,5 +1,8 @@
+// @ts-ignore
 import {Component} from "Component";
+// @ts-ignore
 import {Random} from "Random";
+// @ts-ignore
 import {Input} from "Input";
 
 // @ts-ignore

@@ -1,13 +1,15 @@
+// @ts-ignore
 import {Component} from "Component";
+// @ts-ignore
 import {Random} from "Random";
 
 export class Panel implements Component {
-    private readonly title: string;
+    readonly title: string;
     private readonly classes: string;
     private readonly random: string;
 
     private childs: Component[] = [];
-    private html: string;
+    private html: string = "";
 
 
     constructor(title: string, classes: string) {

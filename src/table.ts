@@ -1,7 +1,10 @@
+// @ts-ignore
 import {Component} from "Component";
 // @ts-ignore
 import {TableComponent} from "TableCompontent";
+// @ts-ignore
 import {Random} from "Random";
+// @ts-ignore
 import {Input} from "Input";
 
 // @ts-ignore
@@ -18,9 +21,8 @@ export class Table implements Component {
     private rows: TableComponent[][] = [];
     private childs: Component[] = [];
     private dragger: any;
-    private draggerLib: any;
     private isloaded: boolean = false;
-    private html: string;
+    private html: string = "";
 
 
     constructor(headers: string[], classes: string) {
@@ -113,6 +115,7 @@ export class Table implements Component {
         }
 
         (function (item) {
+            // @ts-ignore
             input.onChange(function (data) {
                 if (typeof item.mappedValue === "undefined") {
                     item.mappedValue = {}
@@ -159,6 +162,7 @@ export class Table implements Component {
             let el = document.getElementById(this.random);
 
             try{
+                //@ts-ignore
                 let ___ignore = Draggable;
             }finally {
 
@@ -172,6 +176,7 @@ export class Table implements Component {
                 onlyBody: true,
                 animation: 300
             });
+            // @ts-ignore
             this.dragger.on('drop', function (from, to) {
                 console.log(from);
                 console.log(to);

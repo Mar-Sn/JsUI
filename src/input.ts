@@ -1,11 +1,13 @@
+// @ts-ignore
 import {Component} from "Component";
+// @ts-ignore
 import {Random} from "Random";
 // @ts-ignore
 let $: jQuery = require("jquery");
 
 export class Input implements Component {
 
-    private readonly name: string;
+    readonly name: string;
     private readonly type: string;
     private readonly value: any;
     private readonly placeholder: string;
@@ -15,7 +17,7 @@ export class Input implements Component {
     private isLoaded: boolean = false;
 
     private callBacks: { (value: any): void; }[] = [];
-    private html: string;
+    private html: string = "";
 
 
     constructor(name: string, type: string, value: any, placeholder: string) {
@@ -30,7 +32,7 @@ export class Input implements Component {
      * add a callback action to this input
      * @param {() => void}callback
      */
-    public onChange(callback) {
+    public onChange(callback: () => void) {
         this.callBacks.push(callback)
     };
 
@@ -68,6 +70,7 @@ export class Input implements Component {
             (function (parent) {
                 if (parent.type === "boolean") {
                     input.change(function () {
+                        // @ts-ignore
                         let value = $(this).val();
 
                         for (let i = 0; i < parent.callBacks.length; i++) {
@@ -78,7 +81,9 @@ export class Input implements Component {
                         }
                     });
                 } else {
-                    input.keypress(function(event){
+                    // @ts-ignore TODO
+                    input.keypress(function (event) {
+                        // @ts-ignore
                         let value = $(this).val() + String.fromCharCode(event.which);
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             switch (parent.type) {

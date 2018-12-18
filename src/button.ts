@@ -17,7 +17,7 @@ export class Button implements Component {
      * @param classes
      * @param callback
      */
-    constructor(classes, callback) {
+    constructor(classes:string, callback:() => void) {
         this.callback = callback;
         this.random = new Random(20).get();
 
@@ -31,6 +31,7 @@ export class Button implements Component {
     uICreated(): void {
         (function (parent) {
             $(document).ready(function () {
+                // @ts-ignore
                 $("#" + this._random).click(function () {
                     parent.callback();
                 });

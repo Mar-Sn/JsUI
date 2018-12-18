@@ -1,4 +1,6 @@
+// @ts-ignore
 import {Component} from "Component";
+// @ts-ignore
 import {Random} from "Random";
 // @ts-ignore
 let $: jQuery = require("jquery");
@@ -8,23 +10,23 @@ export class Popup implements Component {
     private readonly header: string;
     private readonly random: string;
 
-    private html: string;
+    private html: string = "";
 
     private childs: Component[] = [];
-    private onclose: () => void;
+    private onClose: () => void;
 
 
     constructor(header: string, onclose: () => void) {
         this.header = header;
-        this.onclose = onclose;
+        this.onClose = onclose;
         this.random = new Random(20).get();
     }
 
     /**
      *
      */
-    public close = function () {
-        this.onclose();
+    public close() {
+        this.onClose();
         (function (parent) {
             $(document).ready(function () {
                 $("#" + parent.random).remove();
