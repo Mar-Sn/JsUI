@@ -77,7 +77,25 @@ export class Input implements Component {
                             if (value === "false")
                                 parent.callBacks[i](false);
                             else
-                                parent.callBacks[i](false);
+                                parent.callBacks[i](true);
+                        }
+                    });
+                } else if (parent.type === "date" || parent.type === "datetime") {
+                    input.change(function () {
+                        // @ts-ignore
+                        let value = $(this).val();
+
+                        for (let i = 0; i < parent.callBacks.length; i++) {
+                            parent.callBacks[i](value);
+                        }
+                    });
+                } else if (parent.type === "number") {
+                    input.change(function () {
+                        // @ts-ignore
+                        let value = $(this).val();
+
+                        for (let i = 0; i < parent.callBacks.length; i++) {
+                            parent.callBacks[i](value);
                         }
                     });
                 } else {
