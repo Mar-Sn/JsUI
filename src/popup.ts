@@ -13,7 +13,7 @@ export class Popup implements Component {
     private html: string = "";
 
     private childs: Component[] = [];
-    private onClose: () => void;
+    private readonly onClose: () => void;
 
 
     constructor(header: string, onclose: () => void) {
@@ -47,7 +47,11 @@ export class Popup implements Component {
 
         $("body").append(this.html);
         $("#" + this.random + ' .inner .popup-body').html(this.getHtml());
-        $("#" + this.random + ' .inner .close').click(this.close);
+        (function(parent){
+            $("#" + parent.random + ' .inner .close').click(function(){
+                parent.close();
+            });
+        })(this);
         this.uICreated();
     };
 
