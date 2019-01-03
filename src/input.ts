@@ -92,7 +92,7 @@ export class Input implements Component {
                 } else if (parent.type === "number") {
                     input.change(function () {
                         // @ts-ignore
-                        let value = $(this).val();
+                        let value = Number($(this).val());
 
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             parent.callBacks[i](value);
