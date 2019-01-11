@@ -14,6 +14,8 @@ export class Button implements Component {
 
     readonly name: String = "";
 
+    private _UiCreated:Boolean = false;
+
     /**
      *
      * @param name
@@ -33,13 +35,16 @@ export class Button implements Component {
     }
 
     uICreated(): void {
-        (function (parent) {
-            $(document).ready(function () {
-                // @ts-ignore
-                $("#" + parent.random).click(function () {
-                    parent.callback();
+        if(!this._UiCreated){
+            this._UiCreated = true;
+            (function (parent) {
+                $(document).ready(function () {
+                    // @ts-ignore
+                    $("#" + parent.random).click(function () {
+                        parent.callback();
+                    });
                 });
-            });
-        })(this);
+            })(this);
+        }
     }
 }
