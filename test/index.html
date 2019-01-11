@@ -38,7 +38,7 @@
             var panel1 = new Panel.Panel("Panel2", "table test");
 
 
-            var object = [{name: "", sub: {}},{name: "", sub: {}}];
+            var object = [{name: "", sub: {}}, {name: "", sub: {}}];
 
             var table = new Table.Table([
                 "text",
@@ -51,6 +51,18 @@
             ], "", object);
 
 
+            var table2 = new Table.Table(['custom component']);
+            var table_button = new Button.Button("another test",'', function () {
+                alert('button works from table');
+
+            });
+            table2.addRow([
+                {
+                    type: "readonly",
+                    key: '',
+                    value: '',
+                    component: table_button
+                }]);
 
 
             table.addRows([[
@@ -62,7 +74,7 @@
                 {type: "text", key: 'name', value: object[0].sub.name, mappedValue: object[0].sub},
                 {type: "number", key: 'number', value: object[0].sub.number, mappedValue: object[0].sub},
                 {type: "datetime", key: 'datetime', value: object[0].sub.datetime, mappedValue: object[0].sub},
-                {type: "boolean", key: 'boolean', value: object[0].sub.boolean, mappedValue: object[0].sub},
+                {type: "boolean", key: 'boolean', value: object[0].sub.boolean, mappedValue: object[0].sub}
             ], [
                 {type: "text", key: 'name', value: object[1].name, mappedValue: object[1]},
                 {type: "number", key: 'number', value: object[1].number, mappedValue: object[1]},
@@ -76,15 +88,20 @@
             ]]);
             panel1.set(table);
 
-            var panel2 = new Panel.Panel("Panel3", "table test");
 
+            var panel2 = new Panel.Panel("Panel2", "table test");
             panel2.set(new Button.Button("test", '', function () {
                 alert('button works');
             }));
 
+
+            var panel3 = new Panel.Panel("Panel3", "Test custom compontent");
+            panel3.set(table2);
+
             popup.append(panel);
             popup.append(panel1);
             popup.append(panel2);
+            popup.append(panel3);
             popup.show();
 
             window.testObject = object;
