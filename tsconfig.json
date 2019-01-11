@@ -10,7 +10,8 @@
     "sourceRoot": "./src/",
    // "outFile": "ui.js",
     "target": "es5",
-    "sourceMap": true
+    "sourceMap": true,
+    "inlineSources": false
   },
   "exclude": [
     "node_modules",

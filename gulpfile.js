@@ -6,11 +6,17 @@ const uglify = require('gulp-uglify');
 const pump = require('pump');
 const rename = require("gulp-rename");
 const connect = require('gulp-connect');
+const sourcemaps = require('gulp-sourcemaps');
 
 
 gulp.task('scripts', function(done) {
-    gulp.src("src/**/*.ts") // or tsProject.src()
-        .pipe(tsProject())
+    gulp.src("src/**/*.ts")
+        .pipe(gulp.dest('target'));
+
+    gulp.src("target/**/*.ts") // or tsProject.src()
+        .pipe(sourcemaps.init())
+        .pipe(tsProject()).js
+        .pipe(sourcemaps.write({includeContent: false}))
         .pipe(gulp.dest('target'));
 
     gulp.src("node_modules/table-dragger/dist/**/*.js") // or tsProject.src()
@@ -25,6 +31,8 @@ gulp.task('scripts', function(done) {
     gulp.src("target/*.js")
         .pipe(gulp.dest('test/lib'));
 
+    gulp.src("target/*.ts")
+        .pipe(gulp.dest('test/lib'));
     done();
 });
 
