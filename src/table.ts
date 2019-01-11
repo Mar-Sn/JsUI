@@ -82,6 +82,15 @@ export class Table implements Component {
                 return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
             case "boolean":
                 return "<td class='handle'>" + this.getInput(column, "boolean").getHtml() + "</td>";
+            case "readonly":
+                if(column.component != null){
+                    //user set compontent himself
+                    this.childs.push(column.component);
+
+                    return "<td class='handle'>" + column.component.getHtml() + "</td>";
+                }else{
+                    return "<td class='handle'>" + column.value + "</td>";
+                }
             default:
                 return "<td class='handle'></td>"
         }
@@ -127,6 +136,7 @@ export class Table implements Component {
                     item.mappedValue = {}
                 }
                 item.mappedValue[item.key] = data;
+                console.log(item.mappedValue[item.key]);
             });
         }(column));
 
