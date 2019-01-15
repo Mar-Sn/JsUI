@@ -8,12 +8,13 @@ import {Random} from "Random";
 import {Input} from "Input";
 // @ts-ignore
 import {Draggable} from "Draggable";
+// @ts-ignore
+import {Button} from "Button";
 
 // @ts-ignore
 let $: jQuery = require("jquery");
 
-export class Table implements Component {
-    private readonly headers: string[];
+export class Grid implements Component {
     private readonly classes: string;
     private readonly random: string;
 
@@ -23,15 +24,12 @@ export class Table implements Component {
     private isloaded: boolean = false;
     private html: string = "";
 
-    private baseArray: [] | undefined;
+    // @ts-ignore
+    private gridData: string[][] | undefined;
 
 
-    constructor(headers: string[], classes: string, baseArray: [] | undefined) {
-        this.baseArray = baseArray;
-        if (!Array.isArray(headers)) {
-            throw "Table arg1 -> headers should be an array!";
-        }
-        this.headers = headers;
+    constructor(classes: string, gridData: [][] | undefined) {
+        this.gridData = gridData;
         this.classes = classes;
         this.random = new Random(20).get();
     }
@@ -39,28 +37,38 @@ export class Table implements Component {
     /**
      *
      * @param {TableComponent[]} columns
+     * @param index
      * @returns {string}
      * @private
      */
-    private getTr(columns: TableComponent[]) {
+    private getTr(columns: TableComponent[], index: number): HTMLElement {
+        let elem = document.createElement("tr");
+
         let arrayLength = columns.length;
         if (arrayLength > 0) {
-            let total = "<tr>";
+            let parent = this;
+            let thisRow = document.getElementById(parent.random);
+            if (thisRow == null) return elem;
+            thisRow = thisRow.getElementsByTagName('tr').item(index);
 
-            columns.forEach(row => {
-                total += this.genTd(row)
+            let addColumn = new Button("+", function () {
+                let emptyColumn = new TableComponent();
+                emptyColumn.type = "text";
+                emptyColumn.thisRow.prepend(parent.genTd(emptyColumn));
             });
 
-            if (arrayLength < this.headers.length) {
-                for (let i = 0; i < this.headers.length - arrayLength; i++) {
-                    total += "<td></td>";
-                }
-            }
-            total += "</tr>";
-            return total
-        } else {
-            return "";
+            let tableComponent = new TableComponent();
+            tableComponent.component = addColumn;
+            tableComponent.type = "readOnly";
+
+            elem.appendChild(this.genTd(tableComponent));
+
+            columns.forEach(column => {
+                elem.appendChild(this.genTd(column));
+            });
+
         }
+        return elem;
     };
 
 
@@ -68,32 +76,43 @@ export class Table implements Component {
      * Gen a TD element with input or readonly
      * @param column
      */
-    private genTd(column: TableComponent) {
+    private genTd(column: TableComponent): HTMLElement {
+        let elem = document.createElement("td");
+        elem.classList.add('handle');
         switch (column.type) {
             case "text":
-                return "<td class='handle'>" + this.getInput(column, "text").getHtml() + "</td>";
+                elem.innerHTML = this.getInput(column, "text").getHtml();
+                break;
             case "number":
-                return "<td class='handle'>" + this.getInput(column, "number").getHtml() + "</td>";
+                elem.innerHTML = this.getInput(column, "number").getHtml();
+                break;
             case "date":
-                return "<td class='handle'>" + this.getInput(column, "date").getHtml() + "</td>";
+                elem.innerHTML = this.getInput(column, "date").getHtml();
+                break;
             case "datetime":
-                return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
+                elem.innerHTML = this.getInput(column, "datetime-local").getHtml();
+                break;
             case "datetime-local":
-                return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
+                elem.innerHTML = this.getInput(column, "datetime-local").getHtml();
+                break;
             case "boolean":
-                return "<td class='handle'>" + this.getInput(column, "boolean").getHtml() + "</td>";
+                elem.innerHTML = this.getInput(column, "boolean").getHtml();
+                break;
             case "readonly":
-                if(column.component != null){
+                if (column.component != null) {
                     //user set compontent himself
                     this.childs.push(column.component);
+                    elem.innerHTML = column.component.getHtml();
 
-                    return "<td class='handle'>" + column.component.getHtml() + "</td>";
-                }else{
-                    return "<td class='handle'>" + column.value + "</td>";
+                    break;
+                } else {
+                    elem.innerHTML = column.value;
+                    break;
                 }
             default:
-                return "<td class='handle'></td>"
+                break;
         }
+        return elem;
     }
 
 
@@ -145,33 +164,62 @@ export class Table implements Component {
         return input;
     }
 
-    private genTh(header: string): string {
-        return "<th>" + header + "</th>";
-    }
-
-    /**
-     * @private
-     */
-    private getHeaders(): string {
-        if (this.headers.length > 0) {
-            let total = "<tr>";
-            this.headers.forEach(header => {
-                total += this.genTh(header);
-            });
-            total += "</tr>";
-            return total
-        } else {
-            return "";
-        }
-    }
 
     private genRows() {
         let total = "";
-        this.rows.forEach(row => {
-            total += this.getTr(row);
-        });
+        for (let i = 0; i < this.rows.length; i++) {
+            total += this.getTr(this.rows[i], i);
+        }
+        total += this.lastRowGen();
+
         return total;
     }
+
+    private lastRowGen() {
+        let id = this.random;
+        let table = document.getElementById(id);
+        let parent = this;
+        let addRow = new Button("add", '', function () {
+            table = document.getElementById(id);
+            if (table != null) {
+                let tableComponent = new TableComponent();
+                tableComponent.type = "text";
+
+                let tbody = table.getElementsByTagName("tbody").item(0);
+                // @ts-ignore
+
+                let newElem = document.createElement("tr");
+                // @ts-ignore
+                newElem.innerHTML = parent.getTr(tableComponent, parent.rows.length);
+
+                // @ts-ignore
+                tbody.appendChild(newElem);
+                parent.lastRowGen();
+            }
+        });
+        this.childs.push(addRow);
+        if (table != null) {
+            let currentNewRows = document.getElementsByClassName("new-row-target");
+            for (let i = 0; i < currentNewRows.length; i++) {
+                // @ts-ignore
+                currentNewRows.item(i).remove();
+            }
+            if (table == null) return;
+
+
+            let newElem = document.createElement("tr");
+            // @ts-ignore
+            newElem.innerHTML = parent.getTr(addRow, parent.rows.length);
+            newElem.classList.add('new-row-target');
+
+            // @ts-ignore
+            table.getElementsByTagName('tbody').item(0).appendChild(newElem);
+            return "";
+        } else {
+            return "<tr class='new-row-target'><td colspan='13'>" + addRow.getHtml() + "</td></tr>";
+        }
+    }
+
 
     private setDraggable() {
         if (this.isloaded && this.rows.length > 0) {
@@ -192,7 +240,7 @@ export class Table implements Component {
                 onlyBody: true,
                 animation: 300
             });
-            (function (parent: Table) {
+            (function (parent: Grid) {
                 parent.dragger.on('drop', function (from: number, to: number) {
                     from--;
                     to--;
@@ -200,11 +248,11 @@ export class Table implements Component {
                     parent.rows[from] = parent.rows[to];
                     parent.rows[to] = copyFrom;
 
-                    if(typeof parent.baseArray !== 'undefined'){
-                        let copyFromBase = parent.baseArray[from];
-                        parent.baseArray[from] = parent.baseArray[to];
-                        parent.baseArray[to] = copyFromBase;
-                    }
+                    /* if (typeof parent.baseArray !== 'undefined') {
+                         let copyFromBase = parent.baseArray[from];
+                         parent.baseArray[from] = parent.baseArray[to];
+                         parent.baseArray[to] = copyFromBase;
+                     }*/
                     console.log(from);
                     console.log(to);
                 });
@@ -220,7 +268,7 @@ export class Table implements Component {
     public addRow(row: TableComponent[]) {
 
         this.rows.push(row);
-        let _row = this.getTr(row);
+        let _row = this.getTr(row, this.rows.length);
 
         if (this.isloaded) {
             $("#" + this.random + " tbody").append(_row);
@@ -246,7 +294,6 @@ export class Table implements Component {
 
     getHtml(): string {
         this.html = "<table id='" + this.random + "' class='sortable " + this.classes + "'><thead>" +
-            this.getHeaders() +
             "</thead><tbody>" + this.genRows() + "</tbody>" +
             "</table>";
         return this.html;

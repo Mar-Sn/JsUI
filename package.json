@@ -16,8 +16,9 @@
     "typescript": "^3.2.2"
   },
   "devDependencies": {
-    "pug": "^2.0.3",
-    "gulp-connect": "^5.7.0"
+    "del": "^3.0.0",
+    "gulp-connect": "^5.7.0",
+    "pug": "^2.0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
