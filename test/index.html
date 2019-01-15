@@ -14,15 +14,16 @@
                 Input: 'input',
                 FieldSetInput: 'fieldset_input',
                 Button: 'button',
+                Grid: 'grid',
                 Table: 'table',
                 Panel: 'panel',
                 Component: 'component',
-                TableComponent: 'table_compontent',
+                TableComponent: 'table_component',
                 Draggable: 'table-dragger.min',
                 Moments: 'moment-timezone.min'
             }
         });
-        require(['jquery', 'Popup', 'Panel', 'FieldSetInput', 'Table', 'Button'], function ($, Popup, Panel, FieldSetInput, Table, Button) {
+        require(['jquery', 'Popup', 'Panel', 'FieldSetInput', 'Table', 'Button', 'Grid', 'TableComponent'], function ($, Popup, Panel, FieldSetInput, Table, Button, Grid, TableComponent) {
             var popup = new Popup.Popup("test", function () {
                 //onclose
                 alert("popup closed");
@@ -102,6 +103,18 @@
             popup.append(panel1);
             popup.append(panel2);
             popup.append(panel3);
+
+
+            var panel4 = new Panel.Panel("Panel 4", "Test grid");
+
+
+            var gridDate = [];
+
+            var grid = new Grid.Grid('grid', gridDate);
+            panel4.set(grid);
+            popup.append(panel4);
+
+
             popup.show();
 
             window.testObject = object;
