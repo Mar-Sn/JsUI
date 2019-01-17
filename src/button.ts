@@ -11,7 +11,7 @@ export class Button implements Component {
     private readonly random: string;
     private readonly html: string;
     private callback: () => void;
-
+    private domLoaded: boolean = false;
     readonly name: String = "";
 
     private _UiCreated:Boolean = false;
@@ -28,6 +28,9 @@ export class Button implements Component {
         this.random = new Random(20).get();
 
         this.html = "<button id='" + this.random + "' class='" + classes + "'>" + name + "</button>";
+        if(this.domLoaded){
+            this.uICreated();
+        }
     }
 
     getHtml(): string {
@@ -35,6 +38,7 @@ export class Button implements Component {
     }
 
     uICreated(): void {
+        this.domLoaded = true;
         if(!this._UiCreated){
             this._UiCreated = true;
             (function (parent) {

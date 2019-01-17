@@ -38,35 +38,37 @@ export class Grid implements Component {
      *
      * @param {TableComponent[]} columns
      * @param index
+     * @param addButton
      * @returns {string}
      * @private
      */
-    private getTr(columns: TableComponent[], index: number): HTMLElement {
+    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLElement {
         let elem = document.createElement("tr");
 
-        let arrayLength = columns.length;
-        if (arrayLength > 0) {
-            let parent = this;
-            let thisRow = document.getElementById(parent.random);
-            if (thisRow == null) return elem;
-            thisRow = thisRow.getElementsByTagName('tr').item(index);
+        let parent = this;
+        let thisRow = document.getElementById(parent.random);
+        if (thisRow == null) return elem;
+        thisRow = thisRow.getElementsByTagName('tr').item(index);
 
-            let addColumn = new Button("+", function () {
+        if (addButton) {
+            let addColumn = new Button("+", '', function () {
                 let emptyColumn = new TableComponent();
                 emptyColumn.type = "text";
                 emptyColumn.thisRow.prepend(parent.genTd(emptyColumn));
             });
-
             let tableComponent = new TableComponent();
             tableComponent.component = addColumn;
-            tableComponent.type = "readOnly";
+            tableComponent.type = "readonly";
 
             elem.appendChild(this.genTd(tableComponent));
 
+        }
+
+
+        if (columns.length > 0) {
             columns.forEach(column => {
                 elem.appendChild(this.genTd(column));
             });
-
         }
         return elem;
     };
@@ -101,7 +103,7 @@ export class Grid implements Component {
             case "readonly":
                 if (column.component != null) {
                     //user set compontent himself
-                    this.childs.push(column.component);
+                    this.addChild(column.component);
                     elem.innerHTML = column.component.getHtml();
 
                     break;
@@ -160,7 +162,7 @@ export class Grid implements Component {
         }(column));
 
         column.component = input;
-        this.childs.push(input);
+        this.addChild(input);
         return input;
     }
 
@@ -168,7 +170,7 @@ export class Grid implements Component {
     private genRows() {
         let total = "";
         for (let i = 0; i < this.rows.length; i++) {
-            total += this.getTr(this.rows[i], i);
+            total += this.generateRow(this.rows[i], i);
         }
         total += this.lastRowGen();
 
@@ -182,44 +184,53 @@ export class Grid implements Component {
         let addRow = new Button("add", '', function () {
             table = document.getElementById(id);
             if (table != null) {
-                let tableComponent = new TableComponent();
-                tableComponent.type = "text";
-
                 let tbody = table.getElementsByTagName("tbody").item(0);
                 // @ts-ignore
 
                 let newElem = document.createElement("tr");
                 // @ts-ignore
-                newElem.innerHTML = parent.getTr(tableComponent, parent.rows.length);
+                newElem.innerHTML = parent.generateRow([], parent.rows.length).outerHTML;
 
                 // @ts-ignore
                 tbody.appendChild(newElem);
                 parent.lastRowGen();
             }
         });
-        this.childs.push(addRow);
+        this.addChild(addRow);
+
         if (table != null) {
             let currentNewRows = document.getElementsByClassName("new-row-target");
             for (let i = 0; i < currentNewRows.length; i++) {
                 // @ts-ignore
                 currentNewRows.item(i).remove();
             }
-            if (table == null) return;
 
+            let newRowComponent = new TableComponent();
+            newRowComponent.component = addRow;
+            newRowComponent.type = "readonly";
 
-            let newElem = document.createElement("tr");
+            let newElem = parent.generateRow([newRowComponent], parent.rows.length, false);
             // @ts-ignore
-            newElem.innerHTML = parent.getTr(addRow, parent.rows.length);
             newElem.classList.add('new-row-target');
 
             // @ts-ignore
-            table.getElementsByTagName('tbody').item(0).appendChild(newElem);
-            return "";
+            return table.getElementsByTagName('tbody').item(0).appendChild(newElem).outerHTML;
         } else {
             return "<tr class='new-row-target'><td colspan='13'>" + addRow.getHtml() + "</td></tr>";
         }
     }
 
+    /**
+     * Adds a compontent to the childs of the component
+     * if ui is already loaded, uICreated is called on this compontent
+     * @param component
+     */
+    private addChild(component: Component) {
+        this.childs.push(component);
+        if(this.isloaded){
+            component.uICreated();
+        }
+    }
 
     private setDraggable() {
         if (this.isloaded && this.rows.length > 0) {
@@ -267,8 +278,8 @@ export class Grid implements Component {
      */
     public addRow(row: TableComponent[]) {
 
-        this.rows.push(row);
-        let _row = this.getTr(row, this.rows.length);
+        this.addChild(row);
+        let _row = this.generateRow(row, this.rows.length);
 
         if (this.isloaded) {
             $("#" + this.random + " tbody").append(_row);
