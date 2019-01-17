@@ -8,6 +8,9 @@ const rename = require("gulp-rename");
 const connect = require('gulp-connect');
 const sourcemaps = require('gulp-sourcemaps');
 const del = require('del');
+const sass = require('gulp-sass');
+
+sass.compiler = require('node-sass');
 
 
 gulp.task('clean', function (done) {
@@ -15,9 +18,25 @@ gulp.task('clean', function (done) {
     done();
 });
 
-gulp.task('copy-source',function (done) {
+gulp.task('copy-source', function (done) {
     return gulp.src("src/**/*.ts")
         .pipe(gulp.dest('target'));
+});
+
+gulp.task('copy-sass', function (done) {
+    return gulp.src("css/*.scss")
+        .pipe(gulp.dest('target/css/'));
+});
+
+gulp.task('compile-sass', function (done) {
+    return gulp.src('target/**/*.scss')
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(gulp.dest('target/css/'));
+});
+
+gulp.task('copy-css', function (done) {
+    return gulp.src("target/css/css/*.css")
+        .pipe(gulp.dest('test/css/'));
 });
 
 gulp.task('scripts', function (done) {
@@ -26,7 +45,7 @@ gulp.task('scripts', function (done) {
         .pipe(sourcemaps.init())
         .pipe(tsProject()).js
         .pipe(sourcemaps.write({includeContent: false}))
-    .pipe(gulp.dest('target'));
+        .pipe(gulp.dest('target'));
 });
 
 gulp.task('dependencies', function (done) {
@@ -78,12 +97,17 @@ gulp.task('connect', function () {
 });
 
 
-
-gulp.task('build', gulp.series(['clean', 'copy-source', 'scripts','ugly', 'dependencies', 'to-test']));
+gulp.task('build', gulp.parallel(
+    [
+    gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test']),
+    gulp.series(['copy-sass', 'compile-sass', 'copy-css'])
+    ])
+);
 
 gulp.task('watch', function () {
     gulp.watch('src/**/*.ts', gulp.series('build'));
     gulp.watch('test/index.html', gulp.series('build'));
+    gulp.watch('css/**/*.scss', gulp.series('build'));
 });
 
 gulp.task('server', gulp.parallel(['connect', 'watch']));

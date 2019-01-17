@@ -18,6 +18,8 @@
   "devDependencies": {
     "del": "^3.0.0",
     "gulp-connect": "^5.7.0",
+    "gulp-sass": "^4.0.2",
+    "node-sass": "^4.11.0",
     "pug": "^2.0.3"
   },
   "scripts": {
