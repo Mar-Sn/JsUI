@@ -6,20 +6,18 @@ import {Random} from "Random";
 let $: jQuery = require("jquery");
 
 
-export class Popup implements Component {
+export class Popup extends Component {
     private readonly header: string;
-    private readonly random: string;
 
     private html: string = "";
 
-    private childs: Component[] = [];
     private readonly onClose: () => void;
 
 
     constructor(header: string, onclose: () => void) {
+        super();
         this.header = header;
         this.onClose = onclose;
-        this.random = new Random(20).get();
     }
 
     /**
@@ -27,16 +25,16 @@ export class Popup implements Component {
      */
     public close() {
         this.onClose();
-        (function (parent) {
+        (function (random) {
             $(document).ready(function () {
-                $("#" + parent.random).remove();
+                $("#" + random).remove();
             });
-        })(this);
+        })(super.random());
     };
 
 
     public show() {
-        this.html = '<div id="' + this.random + '" class="popup">' +
+        this.html = '<div id="' + super.random() + '" class="popup">' +
             '    <div class="inner">' +
             '        <div class="close"></div>' +
             '        <header>' + this.header + '</header>' +
@@ -46,13 +44,13 @@ export class Popup implements Component {
             '</div>';
 
         $("body").append(this.html);
-        $("#" + this.random + ' .inner .popup-body').html(this.getHtml());
-        (function(parent){
-            $("#" + parent.random + ' .inner .close').click(function(){
+        $("#" + super.random() + ' .inner .popup-body').html(this.getHtml());
+        (function(random, parent){
+            $("#" + random + ' .inner .close').click(function(){
                 parent.close();
             });
-        })(this);
-        this.uICreated();
+        })(super.random(), this);
+        super.uICreated();
     };
 
     
@@ -61,8 +59,8 @@ export class Popup implements Component {
      * @param {Component} component
      */
     public set(component: Component) {
-        this.childs = [];
-        this.childs.push(component);
+        super.clearChildren();
+        super.addChild(component)
     };
 
 
@@ -71,22 +69,20 @@ export class Popup implements Component {
      * @param {Component} component
      */
     public append(component: Component) {
-        this.childs.push(component);
+        super.addChild(component);
+
+        let children = super.children();
+        console.log(children.length);
     };
 
 
     getHtml(): string {
         let stringBuilder = "";
-        this.childs.forEach(child => {
+        // @ts-ignore
+        super.children().forEach(child => {
             stringBuilder += child.getHtml();
         });
         return stringBuilder;
-    }
-
-    uICreated(): void {
-        this.childs.forEach(child => {
-            child.uICreated();
-        });
     }
 
 }

@@ -6,15 +6,12 @@ import {Random} from "Random";
 // @ts-ignore
 let $: jQuery = require("jquery");
 
-export class Button implements Component {
+export class Button extends Component{
     // @ts-ignore
-    private readonly random: string;
     private readonly html: string;
     private callback: () => void;
-    private domLoaded: boolean = false;
+    private callbackBinded: boolean = false;
     readonly name: String = "";
-
-    private _UiCreated:Boolean = false;
 
     /**
      *
@@ -23,12 +20,11 @@ export class Button implements Component {
      * @param callback
      */
     constructor(name: String, classes: string, callback: () => void) {
+        super();
         this.callback = callback;
         this.name = name;
-        this.random = new Random(20).get();
-
-        this.html = "<button id='" + this.random + "' class='" + classes + "'>" + name + "</button>";
-        if(this.domLoaded){
+        this.html = "<button id='" + super.random() + "' class='" + classes + "'>" + name + "</button>";
+        if(super.domLoaded()){
             this.uICreated();
         }
     }
@@ -38,17 +34,17 @@ export class Button implements Component {
     }
 
     uICreated(): void {
-        this.domLoaded = true;
-        if(!this._UiCreated){
-            this._UiCreated = true;
-            (function (parent) {
+        super.uICreated(); //first call base method
+        if(!this.callbackBinded){
+            this.callbackBinded = true;
+            (function (random, parent) {
                 $(document).ready(function () {
                     // @ts-ignore
-                    $("#" + parent.random).click(function () {
+                    $("#" + random).click(function () {
                         parent.callback();
                     });
                 });
-            })(this);
+            })(super.random(), this);
         }
     }
 }

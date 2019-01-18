@@ -14,14 +14,11 @@ import {Button} from "Button";
 // @ts-ignore
 let $: jQuery = require("jquery");
 
-export class Grid implements Component {
+export class Grid extends Component{
     private readonly classes: string;
-    private readonly random: string;
 
     private rows: TableComponent[][] = [];
-    private childs: Component[] = [];
     private dragger: any;
-    private isloaded: boolean = false;
     private html: string = "";
 
     // @ts-ignore
@@ -29,9 +26,9 @@ export class Grid implements Component {
 
 
     constructor(classes: string, gridData: [][] | undefined) {
+        super();
         this.gridData = gridData;
         this.classes = classes;
-        this.random = new Random(20).get();
     }
 
     /**
@@ -46,7 +43,7 @@ export class Grid implements Component {
         let elem = document.createElement("tr");
 
         let parent = this;
-        let thisRow = document.getElementById(parent.random);
+        let thisRow = document.getElementById(super.random());
         if (thisRow == null) return elem;
         thisRow = thisRow.getElementsByTagName('tr').item(index);
 
@@ -103,7 +100,7 @@ export class Grid implements Component {
             case "readonly":
                 if (column.component != null) {
                     //user set compontent himself
-                    this.addChild(column.component);
+                    super.addChild(column.component);
                     elem.innerHTML = column.component.getHtml();
 
                     break;
@@ -120,7 +117,7 @@ export class Grid implements Component {
 
     /**
      * Get an input based on tableCompontent
-     * Registers Component to childs
+     * Registers Component to children
      *
      * @param column
      * @param type
@@ -162,7 +159,7 @@ export class Grid implements Component {
         }(column));
 
         column.component = input;
-        this.addChild(input);
+        super.addChild(input);
         return input;
     }
 
@@ -178,7 +175,7 @@ export class Grid implements Component {
     }
 
     private lastRowGen() {
-        let id = this.random;
+        let id = super.random();
         let table = document.getElementById(id);
         let parent = this;
         let addRow = new Button("add", '', function () {
@@ -196,7 +193,7 @@ export class Grid implements Component {
                 parent.lastRowGen();
             }
         });
-        this.addChild(addRow);
+        super.addChild(addRow);
 
         if (table != null) {
             let currentNewRows = document.getElementsByClassName("new-row-target");
@@ -220,21 +217,9 @@ export class Grid implements Component {
         }
     }
 
-    /**
-     * Adds a compontent to the childs of the component
-     * if ui is already loaded, uICreated is called on this compontent
-     * @param component
-     */
-    private addChild(component: Component) {
-        this.childs.push(component);
-        if(this.isloaded){
-            component.uICreated();
-        }
-    }
-
     private setDraggable() {
-        if (this.isloaded && this.rows.length > 0) {
-            let el = document.getElementById(this.random);
+        if (super.domLoaded() && this.rows.length > 0) {
+            let el = document.getElementById(super.random());
 
             try {
                 //@ts-ignore
@@ -278,13 +263,14 @@ export class Grid implements Component {
      */
     public addRow(row: TableComponent[]) {
 
-        this.addChild(row);
+        super.addChild(row);
         let _row = this.generateRow(row, this.rows.length);
 
-        if (this.isloaded) {
-            $("#" + this.random + " tbody").append(_row);
+        if (super.domLoaded()) {
+            $("#" + super.random() + " tbody").append(_row);
             if (row.length > 0) {
-                this.childs.forEach(child => {
+                // @ts-ignore
+                super.children.forEach(child => {
                     child.uICreated();
                 });
             }
@@ -304,20 +290,15 @@ export class Grid implements Component {
 
 
     getHtml(): string {
-        this.html = "<table id='" + this.random + "' class='sortable " + this.classes + "'><thead>" +
+        this.html = "<table id='" + super.random() + "' class='sortable " + this.classes + "'><thead>" +
             "</thead><tbody>" + this.genRows() + "</tbody>" +
             "</table>";
         return this.html;
     }
 
     uICreated(): void {
-        if (!this.isloaded) {
-            this.isloaded = true;
-            this.setDraggable();
-            this.childs.forEach(child => {
-                child.uICreated();
-            });
-        }
+        super.uICreated();
+        this.setDraggable();
     }
 
 

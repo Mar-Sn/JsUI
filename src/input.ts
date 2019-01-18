@@ -2,16 +2,17 @@
 import {Component} from "Component";
 // @ts-ignore
 import {Random} from "Random";
+
+
 // @ts-ignore
 let $: jQuery = require("jquery");
 
-export class Input implements Component {
+export class Input extends Component{
 
     readonly name: string;
     private readonly type: string;
     private readonly value: any;
     private readonly placeholder: string;
-    private readonly random: string;
 
 
     private isLoaded: boolean = false;
@@ -21,11 +22,11 @@ export class Input implements Component {
 
 
     constructor(name: string, type: string, value: any, placeholder: string) {
+        super();
         this.name = name;
         this.type = type;
         this.value = value;
         this.placeholder = placeholder;
-        this.random = new Random(20).get();
     }
 
     /**
@@ -39,7 +40,7 @@ export class Input implements Component {
     getHtml(): string {
         if (this.type === "boolean") {
             let stringBuilder = "";
-            stringBuilder += "<select id='" + this.random + "'>";
+            stringBuilder += "<select id='" + super.random() + "'>";
             if (!this.value) {
                 stringBuilder += "<option value=\"false\">No</option>";
                 stringBuilder += "<option value=\"true\">Yes</option>";
@@ -55,7 +56,7 @@ export class Input implements Component {
             if (typeof this.value === 'undefined') {
                 v = "";
             }
-            this.html = '<input id="' + this.random + '" name="' + name + '" type="' + this.type + '"  value="' + v + '" placeholder="' + this.placeholder + '">';
+            this.html = '<input id="' + super.random() + '" name="' + name + '" type="' + this.type + '"  value="' + v + '" placeholder="' + this.placeholder + '">';
             return this.html;
         }
     }
@@ -65,7 +66,7 @@ export class Input implements Component {
             this.isLoaded = true;
             //do nothing
 
-            let input = $("#" + this.random);
+            let input = $("#" + super.random());
 
             (function (parent) {
                 if (parent.type === "boolean") {

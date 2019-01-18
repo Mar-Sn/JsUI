@@ -12,28 +12,25 @@ import {Draggable} from "Draggable";
 // @ts-ignore
 let $: jQuery = require("jquery");
 
-export class Table implements Component {
+export class Table extends Component {
     private readonly headers: string[];
     private readonly classes: string;
-    private readonly random: string;
 
     private rows: TableComponent[][] = [];
-    private childs: Component[] = [];
     private dragger: any;
-    private isloaded: boolean = false;
     private html: string = "";
 
     private baseArray: [] | undefined;
 
 
     constructor(headers: string[], classes: string, baseArray: [] | undefined) {
+        super();
         this.baseArray = baseArray;
         if (!Array.isArray(headers)) {
             throw "Table arg1 -> headers should be an array!";
         }
         this.headers = headers;
         this.classes = classes;
-        this.random = new Random(20).get();
     }
 
     /**
@@ -85,7 +82,7 @@ export class Table implements Component {
             case "readonly":
                 if(column.component != null){
                     //user set compontent himself
-                    this.childs.push(column.component);
+                    super.addChild(column.component);
 
                     return "<td class='handle'>" + column.component.getHtml() + "</td>";
                 }else{
@@ -99,7 +96,7 @@ export class Table implements Component {
 
     /**
      * Get an input based on tableCompontent
-     * Registers Component to childs
+     * Registers Component to children
      *
      * @param column
      * @param type
@@ -141,7 +138,7 @@ export class Table implements Component {
         }(column));
 
         column.component = input;
-        this.childs.push(input);
+        super.addChild(input);
         return input;
     }
 
@@ -174,8 +171,8 @@ export class Table implements Component {
     }
 
     private setDraggable() {
-        if (this.isloaded && this.rows.length > 0) {
-            let el = document.getElementById(this.random);
+        if (super.domLoaded() && this.rows.length > 0) {
+            let el = document.getElementById(super.random());
 
             try {
                 //@ts-ignore
@@ -222,10 +219,11 @@ export class Table implements Component {
         this.rows.push(row);
         let _row = this.getTr(row);
 
-        if (this.isloaded) {
-            $("#" + this.random + " tbody").append(_row);
+        if (super.domLoaded()) {
+            $("#" + super.random() + " tbody").append(_row);
             if (row.length > 0) {
-                this.childs.forEach(child => {
+                // @ts-ignore
+                super.children().forEach(child => {
                     child.uICreated();
                 });
             }
@@ -245,7 +243,7 @@ export class Table implements Component {
 
 
     getHtml(): string {
-        this.html = "<table id='" + this.random + "' class='sortable " + this.classes + "'><thead>" +
+        this.html = "<table id='" + super.random() + "' class='sortable " + this.classes + "'><thead>" +
             this.getHeaders() +
             "</thead><tbody>" + this.genRows() + "</tbody>" +
             "</table>";
@@ -253,13 +251,8 @@ export class Table implements Component {
     }
 
     uICreated(): void {
-        if (!this.isloaded) {
-            this.isloaded = true;
-            this.setDraggable();
-            this.childs.forEach(child => {
-                child.uICreated();
-            });
-        }
+        super.uICreated();
+        this.setDraggable();
     }
 
 

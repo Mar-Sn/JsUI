@@ -3,34 +3,27 @@ import {Component} from "Component";
 // @ts-ignore
 import {Random} from "Random";
 
-export class Panel implements Component {
+export class Panel extends Component{
     readonly title: string;
     private readonly classes: string;
-    private readonly random: string;
 
-    private childs: Component[] = [];
     private html: string = "";
 
 
     constructor(title: string, classes: string) {
+        super();
         this.title = title;
         this.classes = classes;
-        this.random = new Random(20).get();
     }
 
     getHtml(): string {
-        this.html = "<div id='" + this.random + "' class='panel " + this.classes + "'>";
-        this.childs.forEach(child =>{
+        this.html = "<div id='" + super.random() + "' class='panel " + this.classes + "'>";
+        // @ts-ignore
+        super.children().forEach(child =>{
             this.html += child.getHtml();
         });
         this.html += "</div>";
         return this.html;
-    }
-
-    uICreated(): void {
-        this.childs.forEach(child =>{
-            child.uICreated();
-        });
     }
 
 
@@ -39,8 +32,8 @@ export class Panel implements Component {
      * @param {Component} component
      */
     set(component: Component) {
-        this.childs = [];
-        this.childs.push(component);
+        super.clearChildren();
+        super.addChild(component);
     };
 
     /**
@@ -48,8 +41,7 @@ export class Panel implements Component {
      * @param {Component} component
      */
     append(component: Component) {
-        this.childs.push(component);
+        super.addChild(component);
     };
-
 
 }
