@@ -50,8 +50,9 @@ export class Grid extends Component{
         if (addButton) {
             let addColumn = new Button("+", '', function () {
                 let emptyColumn = new TableComponent();
-                emptyColumn.type = "text";
-                emptyColumn.thisRow.prepend(parent.genTd(emptyColumn));
+                emptyColumn.type = "readonly";
+                if(thisRow == null) return;
+                thisRow.prepend(parent.genTd(emptyColumn));
             });
             let tableComponent = new TableComponent();
             tableComponent.component = addColumn;
@@ -133,7 +134,7 @@ export class Grid extends Component{
             column.mappedValue[column.key] = false;
         }
 
-        if (typeof column.value !== "undefined" && column.value !== null) {
+        if (typeof column.value !== "undefined" && column.value !== null && typeof column.key !== "undefined" && column.key !== "") {
             switch (type) {
                 case "boolean":
                     column.mappedValue[column.key] = column.value !== "false";
