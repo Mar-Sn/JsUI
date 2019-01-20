@@ -14,8 +14,7 @@ sass.compiler = require('node-sass');
 
 
 gulp.task('clean', function (done) {
-    del(['target/*']);
-    done();
+    return del(['target/*']);
 });
 
 gulp.task('copy-source', function (done) {
@@ -48,29 +47,48 @@ gulp.task('scripts', function (done) {
         .pipe(gulp.dest('target'));
 });
 
-gulp.task('dependencies', function (done) {
-    gulp.src("node_modules/table-dragger/dist/**/*.js") // or tsProject.src()
-        .pipe(gulp.dest('target'));
 
-    gulp.src("node_modules/moment-timezone/builds/moment-timezone.min.js")
-        .pipe(gulp.dest('target'));
 
-    gulp.src("node_modules/flatpickr/dist/flatpickr.min.js")
-        .pipe(gulp.dest('target'));
-
-    done();
+gulp.task('dep-table-dragger', function(done){
+    return gulp.src("node_modules/table-dragger/dist/**/*.js") // or tsProject.src()
+        .pipe(gulp.dest('target/libs/table-dragger/'));
 });
 
-gulp.task('to-test', function (done) {
-
-    gulp.src("target/*.js")
-        .pipe(gulp.dest('test/lib'));
-
-    gulp.src("target/*.ts")
-        .pipe(gulp.dest('test/lib'));
-
-    done();
+gulp.task('dep-moment-timezone', function(done){
+    return gulp.src("node_modules/moment-timezone/builds/moment-timezone.min.js")
+        .pipe(gulp.dest('target/libs/moment-timezone/'));
 });
+
+gulp.task('dep-flatpickr', function(done){
+    return gulp.src("node_modules/flatpickr/dist/flatpickr.min.js")
+        .pipe(gulp.dest('target/libs/flatpickr/'));
+});
+
+gulp.task('dep-trumbowyg', function(done){
+    return gulp.src("node_modules/trumbowyg/**")
+        .pipe(gulp.dest('target/libs/trumbowyg/'));
+});
+
+gulp.task('dependencies', gulp.parallel(['dep-table-dragger', 'dep-moment-timezone', 'dep-flatpickr', 'dep-trumbowyg']));
+
+
+gulp.task('move-js-to-test', function(){
+    return gulp.src("target/**/*.js")
+        .pipe(gulp.dest('test/lib'));
+});
+
+gulp.task('move-ts-to-test', function(){
+    return gulp.src("target/**/*.ts")
+        .pipe(gulp.dest('test/lib'));
+});
+
+gulp.task('move-libs-to-test', function(){
+    return gulp.src("target/libs")
+        .pipe(gulp.dest('test/lib'));
+});
+
+
+gulp.task('to-test', gulp.parallel(['move-js-to-test', 'move-ts-to-test', 'move-libs-to-test']));
 
 gulp.task('ugly', function (cb) {
     return pump([
