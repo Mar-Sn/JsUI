@@ -14,7 +14,7 @@ import {Button} from "Button";
 // @ts-ignore
 let $: jQuery = require("jquery");
 
-export class Grid extends Component{
+export class Grid extends Component {
     private readonly classes: string;
 
     private rows: TableComponent[][] = [];
@@ -39,45 +39,55 @@ export class Grid extends Component{
      * @returns {string}
      * @private
      */
-    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLElement {
-        let elem = document.createElement("tr");
+    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement {
 
         let parent = this;
-        let thisRow = document.getElementById(super.random());
-        if (thisRow == null) return elem;
-        thisRow = thisRow.getElementsByTagName('tr').item(index);
+        let table = document.getElementById(super.random());
+        if (table == null) return document.createElement("tr");
 
+        let tbody = table.getElementsByTagName('tbody').item(0);
+
+        if (tbody == null) return document.createElement("tr");
+
+        let elem = tbody.insertRow(index);
         if (addButton) {
-            let addColumn = new Button("+", '', function () {
-                let emptyColumn = new TableComponent();
-                emptyColumn.type = "readonly";
-                if(thisRow == null) return;
-                thisRow.prepend(parent.genTd(emptyColumn));
-            });
+            let addColumn = this.generateAddColumnToRowButton(elem, parent);
+
             let tableComponent = new TableComponent();
             tableComponent.component = addColumn;
             tableComponent.type = "readonly";
 
-            elem.appendChild(this.genTd(tableComponent));
+            this.genTd(tableComponent, elem);
 
         }
 
 
         if (columns.length > 0) {
             columns.forEach(column => {
-                elem.appendChild(this.genTd(column));
+                this.genTd(column, elem);
             });
         }
+        this.rows.push(columns);
         return elem;
     };
 
 
+    private generateAddColumnToRowButton(thisRow: HTMLTableRowElement, parent: Grid) {
+        return new Button("+", '', function () {
+            let emptyColumn = new TableComponent();
+            emptyColumn.type = "readonly";
+            if (thisRow == null) return;
+            parent.genTd(emptyColumn, thisRow);
+        });
+    }
+
     /**
      * Gen a TD element with input or readonly
      * @param column
+     * @param row
      */
-    private genTd(column: TableComponent): HTMLElement {
-        let elem = document.createElement("td");
+    private genTd(column: TableComponent, row: HTMLTableRowElement): HTMLTableCellElement {
+        let elem = row.insertCell(0);
         elem.classList.add('handle');
         switch (column.type) {
             case "text":
@@ -182,26 +192,15 @@ export class Grid extends Component{
         let addRow = new Button("add", '', function () {
             table = document.getElementById(id);
             if (table != null) {
-                let tbody = table.getElementsByTagName("tbody").item(0);
+                let higherThanNull = parent.rows.length;
+                if (higherThanNull < 0) higherThanNull = 0;
+                parent.generateRow([], higherThanNull);
                 // @ts-ignore
-
-                let newElem = document.createElement("tr");
-                // @ts-ignore
-                newElem.innerHTML = parent.generateRow([], parent.rows.length).outerHTML;
-
-                // @ts-ignore
-                tbody.appendChild(newElem);
-                parent.lastRowGen();
             }
         });
         super.addChild(addRow);
 
         if (table != null) {
-            let currentNewRows = document.getElementsByClassName("new-row-target");
-            for (let i = 0; i < currentNewRows.length; i++) {
-                // @ts-ignore
-                currentNewRows.item(i).remove();
-            }
 
             let newRowComponent = new TableComponent();
             newRowComponent.component = addRow;
