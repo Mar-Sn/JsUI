@@ -75,7 +75,7 @@ export class Grid extends Component {
     private generateAddColumnToRowButton(thisRow: HTMLTableRowElement, parent: Grid) {
         return new Button("+", '', function () {
             let emptyColumn = new TableComponent();
-            emptyColumn.type = "readonly";
+            emptyColumn.type = "trumbowyg";
             if (thisRow == null) return;
             parent.genTd(emptyColumn, thisRow);
         });
@@ -107,6 +107,16 @@ export class Grid extends Component {
                 break;
             case "boolean":
                 elem.innerHTML = this.getInput(column, "boolean").getHtml();
+                break;
+            case "trumbowyg":
+                column.value = 12;
+                elem.colSpan = 12;
+                let input = this.getInput(column, "number");
+
+                input.onChange(function(data: number){
+                    elem.colSpan = data;
+                });
+                elem.innerHTML = "<div class='edit'><div class='amount'>" + input.getHtml() + "/ 12</div></div>";
                 break;
             case "readonly":
                 if (column.component != null) {
