@@ -87,7 +87,7 @@ export class Grid extends Component {
      * @param row
      */
     private genTd(column: TableComponent, row: HTMLTableRowElement): HTMLTableCellElement {
-        let elem = row.insertCell(0);
+        let elem = row.insertCell(row.cells.length - 1);
         elem.classList.add('handle');
         switch (column.type) {
             case "text":
