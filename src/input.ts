@@ -3,11 +3,7 @@ import {Component} from "Component";
 // @ts-ignore
 import {Random} from "Random";
 
-
-// @ts-ignore
-let $: jQuery = require("jquery");
-
-export class Input extends Component{
+export class Input extends Component {
 
     readonly name: string;
     private readonly type: string;
@@ -36,6 +32,22 @@ export class Input extends Component{
     public onChange(callback: () => void) {
         this.callBacks.push(callback)
     };
+
+
+    public getValue(): any {
+        let htmlElement = document.getElementById(super.random()) as HTMLInputElement;
+
+        if (this.type === "boolean") {
+            return htmlElement.value === "true";
+        } else if (this.type === "date" || this.type === "datetime") {
+            return htmlElement.value;
+        } else if (this.type === "number") {
+            return Number(htmlElement.value);
+        } else {
+            //string
+            return htmlElement.value;
+        }
+    }
 
     getHtml(): string {
         if (this.type === "boolean") {
@@ -66,13 +78,14 @@ export class Input extends Component{
             this.isLoaded = true;
             //do nothing
 
-            let input = $("#" + super.random());
+            let input = document.getElementById(super.random()) as HTMLInputElement;
+            if(input == null) return;
 
             (function (parent) {
                 if (parent.type === "boolean") {
-                    input.change(function () {
+                    input.onchange = function () {
                         // @ts-ignore
-                        let value = $(this).val();
+                        let value = input.value;
 
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             if (value === "false")
@@ -80,30 +93,30 @@ export class Input extends Component{
                             else
                                 parent.callBacks[i](true);
                         }
-                    });
+                    };
                 } else if (parent.type === "date" || parent.type === "datetime") {
-                    input.change(function () {
+                    input.onchange = function () {
                         // @ts-ignore
-                        let value = $(this).val();
+                        let value = input.value;
 
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             parent.callBacks[i](value);
                         }
-                    });
+                    };
                 } else if (parent.type === "number") {
-                    input.change(function () {
+                    input.onchange = function () {
                         // @ts-ignore
-                        let value = Number($(this).val());
+                        let value = Number(input.value);
 
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             parent.callBacks[i](value);
                         }
-                    });
+                    };
                 } else {
                     // @ts-ignore TODO
-                    input.keypress(function (event) {
+                    input.onkeypress = function(event){
                         // @ts-ignore
-                        let value = $(this).val() + String.fromCharCode(event.which);
+                        let value = input.value + String.fromCharCode(event.which);
                         for (let i = 0; i < parent.callBacks.length; i++) {
                             switch (parent.type) {
                                 case "number":
@@ -118,7 +131,7 @@ export class Input extends Component{
                             }
 
                         }
-                    });
+                    };
                 }
             })(this);
         }

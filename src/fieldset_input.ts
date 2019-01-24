@@ -54,13 +54,9 @@ export class FieldSetInput extends Component{
         this.child.onChange(callback);
     }
 
-    /**
-     * Get the value of field
-     *
-     * @return {string}
-     */
-    public getValue() {
-        this.currentValue = $("#" + super.random() + " input[name=" + name + "]").val();
+
+    public getValue():any {
+        this.currentValue = this.child.getValue();
         return this.currentValue;
     };
 
