@@ -11,7 +11,7 @@ export class Button extends Component{
     private readonly html: string;
     private callback: () => void;
     private callbackBinded: boolean = false;
-    readonly name: String = "";
+    private button: HTMLButtonElement;
 
     /**
      *
@@ -19,18 +19,30 @@ export class Button extends Component{
      * @param classes
      * @param callback
      */
-    constructor(name: String, classes: string, callback: () => void) {
+    constructor(name: string, classes: string | string[], callback: () => void) {
         super();
         this.callback = callback;
-        this.name = name;
-        this.html = "<button id='" + super.random() + "' class='" + classes + "'>" + name + "</button>";
+
+        this.button = document.createElement("button");
+        this.button.id = super.random();
+        this.button.innerHTML = name;
+        if(typeof classes === "string"){
+            this.button.className = classes;
+        }else if(typeof classes === "object"){
+            let parent = this;
+            classes.forEach(function(item){
+                // @ts-ignore
+                parent.button.classList.add(item);
+            });
+        }
+
         if(super.domLoaded()){
             this.uICreated();
         }
     }
 
-    getHtml(): string {
-        return this.html;
+    getElement(): HTMLElement | null {
+        return this.button;
     }
 
     uICreated(): void {

@@ -14,23 +14,40 @@ let $: jQuery = require("jquery");
 
 export class Table extends Component {
     private readonly headers: string[];
-    private readonly classes: string;
 
     private rows: TableComponent[][] = [];
     private dragger: any;
-    private html: string = "";
 
     private baseArray: [] | undefined;
 
+    private readonly table: HTMLTableElement;
+    // @ts-ignore
+    private readonly tHead: HTMLTableSectionElement;
+    private readonly tBody: HTMLTableSectionElement;
 
-    constructor(headers: string[], classes: string, baseArray: [] | undefined) {
+    constructor(headers: string[], classes: string | string[], baseArray: [] | undefined) {
         super();
         this.baseArray = baseArray;
         if (!Array.isArray(headers)) {
             throw "Table arg1 -> headers should be an array!";
         }
         this.headers = headers;
-        this.classes = classes;
+        this.table = document.createElement("table");
+        this.table.id = super.random();
+        if (typeof classes === "string") {
+            this.table.className = classes;
+        } else if (typeof classes === "object") {
+            let parent = this;
+            classes.forEach(function (item) {
+                // @ts-ignore
+                parent.fieldset.classList.add(item);
+            });
+        }
+
+        this.tHead = this.table.createTHead();
+        this.tBody = this.table.createTBody();
+        this.genHeader();
+        this.genRows()
     }
 
     /**
@@ -39,57 +56,64 @@ export class Table extends Component {
      * @returns {string}
      * @private
      */
-    private getTr(columns: TableComponent[]) {
+    private genTr(columns: TableComponent[]) {
         let arrayLength = columns.length;
         if (arrayLength > 0) {
-            let total = "<tr>";
+            let row = this.tBody.insertRow();
 
-            columns.forEach(row => {
-                total += this.genTd(row)
+            columns.forEach(data => {
+                this.genTd(data, row)
             });
 
             if (arrayLength < this.headers.length) {
                 for (let i = 0; i < this.headers.length - arrayLength; i++) {
-                    total += "<td></td>";
+                    row.insertCell(); //add empty cells to fill up
                 }
             }
-            total += "</tr>";
-            return total
-        } else {
-            return "";
         }
     };
 
 
     /**
      * Gen a TD element with input or readonly
-     * @param column
+     * @param data
+     * @param row
      */
-    private genTd(column: TableComponent) {
-        switch (column.type) {
+    private genTd(data: TableComponent, row: HTMLTableRowElement): void {
+        let td = row.insertCell();
+        td.className = "handle";
+        switch (data.type) {
             case "text":
-                return "<td class='handle'>" + this.getInput(column, "text").getHtml() + "</td>";
+                td.appendChild(this.getInput(data, "text").getElement());
+                break;
             case "number":
-                return "<td class='handle'>" + this.getInput(column, "number").getHtml() + "</td>";
+                td.appendChild(this.getInput(data, "number").getElement());
+                break;
             case "date":
-                return "<td class='handle'>" + this.getInput(column, "date").getHtml() + "</td>";
+                td.appendChild(this.getInput(data, "date").getElement());
+                break;
             case "datetime":
-                return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
+                td.appendChild(this.getInput(data, "datetime-local").getElement());
+                break;
             case "datetime-local":
-                return "<td class='handle'>" + this.getInput(column, "datetime-local").getHtml() + "</td>";
+                td.appendChild(this.getInput(data, "datetime-local").getElement());
+                break;
             case "boolean":
-                return "<td class='handle'>" + this.getInput(column, "boolean").getHtml() + "</td>";
+                td.appendChild(this.getInput(data, "boolean").getElement());
+                break;
             case "readonly":
-                if(column.component != null){
+                if (data.component != null) {
                     //user set compontent himself
-                    super.addChild(column.component);
+                    super.addChild(data.component);
 
-                    return "<td class='handle'>" + column.component.getHtml() + "</td>";
-                }else{
-                    return "<td class='handle'>" + column.value + "</td>";
+                    td.appendChild(data.component.getElement());
+                } else {
+                    td.innerHTML = data.value;
                 }
+                break;
             default:
-                return "<td class='handle'></td>"
+                td.innerHTML = data.value;
+                break;
         }
     }
 
@@ -142,38 +166,35 @@ export class Table extends Component {
         return input;
     }
 
-    private genTh(header: string): string {
-        return "<th>" + header + "</th>";
+    private genTh(header: string, row: HTMLTableRowElement): void {
+        let th: HTMLTableHeaderCellElement = document.createElement("th");
+        th.innerHTML = header;
+        row.appendChild(th);
     }
 
     /**
      * @private
      */
-    private getHeaders(): string {
+    private genHeader(): void {
+        let row = this.tHead.insertRow();
+
         if (this.headers.length > 0) {
-            let total = "<tr>";
             this.headers.forEach(header => {
-                total += this.genTh(header);
+                this.genTh(header, row);
             });
-            total += "</tr>";
-            return total
-        } else {
-            return "";
         }
     }
 
     private genRows() {
         let total = "";
         this.rows.forEach(row => {
-            total += this.getTr(row);
+            total += this.genTr(row);
         });
         return total;
     }
 
     private setDraggable() {
         if (super.domLoaded() && this.rows.length > 0) {
-            let el = document.getElementById(super.random());
-
             try {
                 //@ts-ignore
                 let ___ignore = Draggable;
@@ -183,7 +204,7 @@ export class Table extends Component {
             // @ts-ignore
             let d = require("Draggable");
 
-            this.dragger = d(el, {
+            this.dragger = d(this.table, {
                 mode: 'row',
                 dragHandler: '.handle',
                 onlyBody: true,
@@ -197,7 +218,7 @@ export class Table extends Component {
                     parent.rows[from] = parent.rows[to];
                     parent.rows[to] = copyFrom;
 
-                    if(typeof parent.baseArray !== 'undefined'){
+                    if (typeof parent.baseArray !== 'undefined') {
                         let copyFromBase = parent.baseArray[from];
                         parent.baseArray[from] = parent.baseArray[to];
                         parent.baseArray[to] = copyFromBase;
@@ -217,7 +238,7 @@ export class Table extends Component {
     public addRow(row: TableComponent[]) {
 
         this.rows.push(row);
-        let _row = this.getTr(row);
+        let _row = this.genTr(row);
 
         if (super.domLoaded()) {
             $("#" + super.random() + " tbody").append(_row);
@@ -241,13 +262,8 @@ export class Table extends Component {
         });
     }
 
-
-    getHtml(): string {
-        this.html = "<table id='" + super.random() + "' class='sortable " + this.classes + "'><thead>" +
-            this.getHeaders() +
-            "</thead><tbody>" + this.genRows() + "</tbody>" +
-            "</table>";
-        return this.html;
+    public getElement(): HTMLElement | null {
+        return this.table;
     }
 
     uICreated(): void {

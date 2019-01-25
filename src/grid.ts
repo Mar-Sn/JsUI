@@ -15,20 +15,37 @@ import {Button} from "Button";
 let $: jQuery = require("jquery");
 
 export class Grid extends Component {
-    private readonly classes: string;
 
     private rows: TableComponent[][] = [];
     private dragger: any;
-    private html: string = "";
 
     // @ts-ignore
     private gridData: string[][] | undefined;
 
 
-    constructor(classes: string, gridData: [][] | undefined) {
+    private readonly gridElement: HTMLTableElement | undefined;
+    // @ts-ignore
+    private tHead: HTMLTableSectionElement;
+    private readonly tBody: HTMLTableSectionElement;
+
+    constructor(classes: string | string[], gridData: [][] | undefined) {
         super();
         this.gridData = gridData;
-        this.classes = classes;
+
+        this.gridElement = document.createElement("table");
+        if(typeof classes === "string"){
+            this.gridElement.classList.add(classes);
+        }else if(typeof classes === "object"){
+            let parent = this;
+            classes.forEach(function(item){
+                // @ts-ignore
+                parent.gridElement.classList.add(item);
+            });
+        }
+
+        this.tHead = this.gridElement.createTHead();
+        this.tBody = this.gridElement.createTBody();
+        this.genRows();
     }
 
     /**
@@ -39,36 +56,32 @@ export class Grid extends Component {
      * @returns {string}
      * @private
      */
-    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement {
+    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement | null{
 
         let parent = this;
-        let table = document.getElementById(super.random());
-        if (table == null) return document.createElement("tr");
 
-        let tbody = table.getElementsByTagName('tbody').item(0);
+        if (this.gridElement == null || this.tBody == null) return null;
 
-        if (tbody == null) return document.createElement("tr");
-
-        let elem = tbody.insertRow(index);
+        let row = this.tBody.insertRow(index);
         if (addButton) {
-            let addColumn = this.generateAddColumnToRowButton(elem, parent);
+            let addColumn = this.generateAddColumnToRowButton(row, parent);
 
             let tableComponent = new TableComponent();
             tableComponent.component = addColumn;
             tableComponent.type = "readonly";
 
-            this.genTd(tableComponent, elem);
+            this.genTd(tableComponent, row);
 
         }
 
 
         if (columns.length > 0) {
             columns.forEach(column => {
-                this.genTd(column, elem);
+                this.genTd(column, row);
             });
         }
         this.rows.push(columns);
-        return elem;
+        return row;
     };
 
 
@@ -91,22 +104,40 @@ export class Grid extends Component {
         elem.classList.add('handle');
         switch (column.type) {
             case "text":
-                elem.innerHTML = this.getInput(column, "text").getHtml();
+                // @ts-ignore
+                let _input = this.getInput(column, "text");
+                elem.appendChild(_input.getElement());
+                super.addChild(_input);
                 break;
             case "number":
-                elem.innerHTML = this.getInput(column, "number").getHtml();
+                // @ts-ignore
+                let _input = this.getInput(column, "number");
+                elem.appendChild(_input.getElement());
+                super.addChild(_input);
                 break;
             case "date":
-                elem.innerHTML = this.getInput(column, "date").getHtml();
+                // @ts-ignore
+                let _input = this.getInput(column, "date");
+                elem.innerHTML = _input.getElement();
+                super.addChild(_input);
                 break;
             case "datetime":
-                elem.innerHTML = this.getInput(column, "datetime-local").getHtml();
+                // @ts-ignore
+                let _input = this.getInput(column, "datetime-local");
+                elem.appendChild(_input.getElement());
+                super.addChild(_input);
                 break;
             case "datetime-local":
-                elem.innerHTML = this.getInput(column, "datetime-local").getHtml();
+                // @ts-ignore
+                let _input = this.getInput(column, "datetime-local");
+                elem.appendChild(_input.getElement());
+                super.addChild(_input);
                 break;
             case "boolean":
-                elem.innerHTML = this.getInput(column, "boolean").getHtml();
+                // @ts-ignore
+                let _input = this.getInput(column, "boolean");
+                elem.innerHTML = _input.getElement();
+                super.addChild(_input);
                 break;
             case "trumbowyg":
                 column.value = 12;
@@ -116,14 +147,23 @@ export class Grid extends Component {
                 input.onChange(function(data: number){
                     elem.colSpan = data;
                 });
-                elem.innerHTML = "<div class='edit'><div class='amount'>" + input.getHtml() + "/ 12</div></div>";
+                let edit = document.createElement("div");
+                edit.classList.add("edit");
+
+                let amount = document.createElement("div");
+                amount.classList.add("amount");
+                amount.appendChild(input.getElement());
+                edit.appendChild(amount);
+
+                elem.appendChild(edit);
+                super.addChild(input);
                 break;
             case "readonly":
                 if (column.component != null) {
                     //user set compontent himself
-                    super.addChild(column.component);
-                    elem.innerHTML = column.component.getHtml();
 
+                    elem.appendChild(column.component.getElement());
+                    super.addChild(column.component);
                     break;
                 } else {
                     elem.innerHTML = column.value;
@@ -180,22 +220,19 @@ export class Grid extends Component {
         }(column));
 
         column.component = input;
-        super.addChild(input);
         return input;
     }
 
 
     private genRows() {
-        let total = "";
-        for (let i = 0; i < this.rows.length; i++) {
-            total += this.generateRow(this.rows[i], i);
-        }
-        total += this.lastRowGen();
 
-        return total;
+        for (let i = 0; i < this.rows.length; i++) {
+            this.generateRow(this.rows[i], i);
+        }
+        this.lastRowGen();
     }
 
-    private lastRowGen() {
+    private lastRowGen(): void {
         let id = super.random();
         let table = document.getElementById(id);
         let parent = this;
@@ -222,8 +259,6 @@ export class Grid extends Component {
 
             // @ts-ignore
             return table.getElementsByTagName('tbody').item(0).appendChild(newElem).outerHTML;
-        } else {
-            return "<tr class='new-row-target'><td colspan='13'>" + addRow.getHtml() + "</td></tr>";
         }
     }
 
@@ -299,12 +334,11 @@ export class Grid extends Component {
     }
 
 
-    getHtml(): string {
-        this.html = "<table id='" + super.random() + "' class='sortable " + this.classes + "'><thead>" +
-            "</thead><tbody>" + this.genRows() + "</tbody>" +
-            "</table>";
-        return this.html;
+    getElement(): HTMLElement | null {
+        if(typeof this.gridElement === "undefined") return null;
+        return this.gridElement;
     }
+
 
     uICreated(): void {
         super.uICreated();

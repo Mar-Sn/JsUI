@@ -5,27 +5,34 @@ import {Random} from "Random";
 
 export class Panel extends Component{
     readonly title: string;
-    private readonly classes: string;
+    private readonly panel: HTMLDivElement;
 
-    private html: string = "";
-
-
-    constructor(title: string, classes: string) {
+    constructor(title: string, classes: string | string[]) {
         super();
         this.title = title;
-        this.classes = classes;
-    }
 
-    getHtml(): string {
-        this.html = "<div id='" + super.random() + "' class='panel " + this.classes + "'>";
+        this.panel = document.createElement("div");
+        this.panel.id = super.random();
+        this.panel.className = "panel";
+
+        if(typeof classes === "string"){
+            this.panel.classList.add(classes);
+        }else if(typeof classes === "object"){
+            let parent = this;
+            classes.forEach(function(item){
+                // @ts-ignore
+                parent.panel.classList.add(item);
+            });
+        }
         // @ts-ignore
         super.children().forEach(child =>{
-            this.html += child.getHtml();
+            this.panel.appendChild(child.getElement());
         });
-        this.html += "</div>";
-        return this.html;
     }
 
+    getElement(): HTMLElement | null {
+        return this.panel;
+    }
 
     /**
      * Overrides current content
@@ -34,6 +41,8 @@ export class Panel extends Component{
     set(component: Component) {
         super.clearChildren();
         super.addChild(component);
+        this.panel.innerHTML = "";
+        this.panel.appendChild(component.getElement());
     };
 
     /**
@@ -42,6 +51,7 @@ export class Panel extends Component{
      */
     append(component: Component) {
         super.addChild(component);
+        this.panel.appendChild(component.getElement());
     };
 
 }

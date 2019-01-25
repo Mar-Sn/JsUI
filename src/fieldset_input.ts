@@ -5,24 +5,23 @@ import {Random} from "Random";
 // @ts-ignore
 import {Input} from "Input";
 
-// @ts-ignore
-let $: jQuery = require("jquery");
-
 export class FieldSetInput extends Component{
 
     private readonly name: string;
     private readonly type: string;
     private readonly value: string;
     private readonly description: string;
-    private readonly classes: string;
+    // @ts-ignore
+    private readonly classes: string | string[];
     private readonly placeholder: string;
-    private readonly html: string;
 
     private currentValue: any;
 
     private child: Input;
+    private readonly fieldset: HTMLFieldSetElement;
+    private readonly label: HTMLLabelElement;
 
-    constructor(name: string, type: string, value: string, description: string, classes: string, placeholder: string) {
+    constructor(name: string, type: string, value: string, description: string, classes: string | string[], placeholder: string) {
         super();
         this.name = name;
         this.type = type;
@@ -34,16 +33,25 @@ export class FieldSetInput extends Component{
         let input = new Input(this.name, this.type, this.value, this.placeholder);
         this.child = input;
 
-        if (typeof this.classes !== 'undefined') {
-
-            this.html = '<fieldset id="' + super.random() + '" class="' + this.classes + '"> <label>' + this.description + '</label>' + input.getHtml() + '</fieldset>';
-        } else {
-            this.html = '<fieldset id="' + super.random() + '"> <label>' + this.description + '</label>' + input.getHtml() + '</fieldset>';
+        this.fieldset = document.createElement("fieldset");
+        this.fieldset.id = super.random();
+        if(typeof classes === "string"){
+            this.fieldset.className = classes;
+        }else if(typeof classes === "object"){
+            let parent = this;
+            classes.forEach(function(item){
+                // @ts-ignore
+                parent.fieldset.classList.add(item);
+            });
         }
-    }
 
-    getHtml(): string {
-        return this.html;
+        this.label = document.createElement("label");
+        this.label.innerHTML = this.description;
+        this.label.appendChild(input.getElement());
+        this.fieldset.appendChild(this.label);
+    }
+    public getElement(): HTMLElement | null {
+        return this.fieldset;
     }
 
     uICreated(): void {
@@ -55,7 +63,7 @@ export class FieldSetInput extends Component{
     }
 
 
-    public getValue():any {
+    public getValue(): any {
         this.currentValue = this.child.getValue();
         return this.currentValue;
     };
@@ -68,7 +76,7 @@ export class FieldSetInput extends Component{
         if (this.currentValue != null) {
             return this.currentValue !== ""
         } else {
-            this.currentValue = $("#" + super.random() + " input[name=" + name + "]").val();
+            this.currentValue = this.child.getValue();
             return typeof this.currentValue !== "undefined" && this.currentValue !== ""
         }
     }

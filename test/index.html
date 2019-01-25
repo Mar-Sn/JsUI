@@ -31,15 +31,15 @@
                 //onclose
                 alert("popup closed");
             });
-            var panel = new Panel.Panel("Panel1", "input test");
+            var panel = new Panel.Panel("Panel1", ["input", "test"]);
 
-            var input = new FieldSetInput.FieldSetInput('name', 'text', '', 'simple description', 'some classes', '');
+            var input = new FieldSetInput.FieldSetInput('name', 'text', '', 'simple description', ['some','classes'], '');
             input.onChange(function (data) {
                 console.log(data);
             });
             panel.append(input);
 
-            var panel1 = new Panel.Panel("Panel2", "table test");
+            var panel1 = new Panel.Panel("Panel2", ["table","test"]);
 
 
             var object = [{name: "", sub: {}}, {name: "", sub: {}}];
@@ -93,13 +93,13 @@
             panel1.set(table);
 
 
-            var panel2 = new Panel.Panel("Panel2", "table test");
+            var panel2 = new Panel.Panel("Panel2", ["table","test"]);
             panel2.set(new Button.Button("test", '', function () {
                 alert('button works');
             }));
 
 
-            var panel3 = new Panel.Panel("Panel3", "Test custom compontent");
+            var panel3 = new Panel.Panel("Panel3", ["Test","custom","compontent"]);
             panel3.set(table2);
 
             popup.append(panel);
@@ -108,7 +108,7 @@
             popup.append(panel3);
 
 
-            var panel4 = new Panel.Panel("Panel 4", "Test grid");
+            var panel4 = new Panel.Panel("Panel 4", ["Test","grid"]);
 
 
             var gridDate = [];

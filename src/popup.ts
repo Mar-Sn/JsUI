@@ -7,49 +7,56 @@ let $: jQuery = require("jquery");
 
 
 export class Popup extends Component {
-    private readonly header: string;
 
-    private html: string = "";
-
-    private readonly onClose: () => void;
-
+    private readonly popup: HTMLDivElement;
+    private body: HTMLDivElement;
 
     constructor(header: string, onclose: () => void) {
         super();
-        this.header = header;
-        this.onClose = onclose;
+
+        let p = document.createElement("div");
+        p.id = super.random();
+        p.className = "popup";
+
+        let inner = document.createElement("div");
+        inner.className = "inner";
+
+        let close = document.createElement("div");
+        close.className = "close";
+        close.addEventListener('click', function(){
+            onclose();
+            p.remove();
+        });
+        inner.appendChild(close);
+
+        let _header = document.createElement("header");
+        _header.innerText = header;
+        inner.appendChild(_header);
+
+        this.body = document.createElement("div");
+        this.body.className = "popup-body";
+
+        let body = this.body;
+        // @ts-ignore
+        super.children().forEach(function(item){
+            body.appendChild(item.getElement());
+        });
+        inner.appendChild(body);
+
+        p.appendChild(inner);
+        this.popup = p;
     }
 
-    /**
-     *
-     */
-    public close() {
-        this.onClose();
-        (function (random) {
-            $(document).ready(function () {
-                $("#" + random).remove();
-            });
-        })(super.random());
-    };
 
+    getElement(): HTMLElement | null {
+        return this.popup;
+    }
 
     public show() {
-        this.html = '<div id="' + super.random() + '" class="popup">' +
-            '    <div class="inner">' +
-            '        <div class="close"></div>' +
-            '        <header>' + this.header + '</header>' +
-            '        <div class="popup-body">' +
-            '        </div>' +
-            '    </div>' +
-            '</div>';
-
-        $("body").append(this.html);
-        $("#" + super.random() + ' .inner .popup-body').html(this.getHtml());
-        (function(random, parent){
-            $("#" + random + ' .inner .close').click(function(){
-                parent.close();
-            });
-        })(super.random(), this);
+        if(this.getElement() != null){
+            // @ts-ignore
+            document.getElementsByTagName('body').item(0).appendChild(this.popup);
+        }
         super.uICreated();
     };
 
@@ -60,7 +67,9 @@ export class Popup extends Component {
      */
     public set(component: Component) {
         super.clearChildren();
-        super.addChild(component)
+        super.addChild(component);
+        this.body.innerText = "";
+        this.body.appendChild(component.getElement());
     };
 
 
@@ -70,19 +79,8 @@ export class Popup extends Component {
      */
     public append(component: Component) {
         super.addChild(component);
-
-        let children = super.children();
-        console.log(children.length);
+        this.body.appendChild(component.getElement());
     };
 
-
-    getHtml(): string {
-        let stringBuilder = "";
-        // @ts-ignore
-        super.children().forEach(child => {
-            stringBuilder += child.getHtml();
-        });
-        return stringBuilder;
-    }
 
 }

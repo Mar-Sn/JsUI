@@ -40,6 +40,8 @@ export abstract class Component{
             component.uICreated();//call uicreated since dom is loaded
     }
 
+    abstract getElement(): HTMLElement | null;
+
     uICreated(): void {
         this._domLoaded = true;
         this._children.forEach(child => {
