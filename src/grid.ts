@@ -24,8 +24,6 @@ export class Grid extends Component {
 
 
     private readonly gridElement: HTMLTableElement | undefined;
-    // @ts-ignore
-    private tHead: HTMLTableSectionElement;
     private readonly tBody: HTMLTableSectionElement;
 
     constructor(classes: string | string[], gridData: [][] | undefined) {
@@ -43,9 +41,8 @@ export class Grid extends Component {
             });
         }
 
-        this.tHead = this.gridElement.createTHead();
         this.tBody = this.gridElement.createTBody();
-        this.genRows();
+        this.generateRows();
     }
 
     /**
@@ -91,6 +88,7 @@ export class Grid extends Component {
             emptyColumn.type = "trumbowyg";
             if (thisRow == null) return;
             parent.genTd(emptyColumn, thisRow);
+            parent.setDraggable();
         });
     }
 
@@ -224,30 +222,28 @@ export class Grid extends Component {
     }
 
 
-    private genRows() {
+    private generateRows() {
 
         for (let i = 0; i < this.rows.length; i++) {
             this.generateRow(this.rows[i], i);
         }
-        this.lastRowGen();
+        this.generateLastRow();
     }
 
-    private lastRowGen(): void {
-        let id = super.random();
-        let table = document.getElementById(id);
+    private generateLastRow(): void {
         let parent = this;
         let addRow = new Button("add", '', function () {
-            table = document.getElementById(id);
-            if (table != null) {
-                let higherThanNull = parent.rows.length;
+            if (parent.gridElement != null) {
+                let higherThanNull = parent.gridElement.rows.length -1;
                 if (higherThanNull < 0) higherThanNull = 0;
                 parent.generateRow([], higherThanNull);
+                parent.setDraggable();
                 // @ts-ignore
             }
         });
         super.addChild(addRow);
 
-        if (table != null) {
+        if (parent.gridElement != null) {
 
             let newRowComponent = new TableComponent();
             newRowComponent.component = addRow;
@@ -256,16 +252,11 @@ export class Grid extends Component {
             let newElem = parent.generateRow([newRowComponent], parent.rows.length, false);
             // @ts-ignore
             newElem.classList.add('new-row-target');
-
-            // @ts-ignore
-            return table.getElementsByTagName('tbody').item(0).appendChild(newElem).outerHTML;
         }
     }
 
     private setDraggable() {
         if (super.domLoaded() && this.rows.length > 0) {
-            let el = document.getElementById(super.random());
-
             try {
                 //@ts-ignore
                 let ___ignore = Draggable;
@@ -275,7 +266,7 @@ export class Grid extends Component {
             // @ts-ignore
             let d = require("Draggable");
 
-            this.dragger = d(el, {
+            this.dragger = d(this.gridElement, {
                 mode: 'row',
                 dragHandler: '.handle',
                 onlyBody: true,
