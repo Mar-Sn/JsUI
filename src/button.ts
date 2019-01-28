@@ -9,9 +9,7 @@ import {Random} from "Random";
 export class Button extends Component{
     // @ts-ignore
     private readonly html: string;
-    private callback: () => void;
-    private callbackBinded: boolean = false;
-    private button: HTMLButtonElement;
+    private readonly button: HTMLButtonElement;
 
     /**
      *
@@ -21,7 +19,6 @@ export class Button extends Component{
      */
     constructor(name: string, classes: string | string[], callback: () => void) {
         super();
-        this.callback = callback;
 
         this.button = document.createElement("button");
         this.button.id = super.random();
@@ -35,7 +32,7 @@ export class Button extends Component{
                 parent.button.classList.add(item);
             });
         }
-
+        this.button.addEventListener("click", callback);
         if(super.domLoaded()){
             this.uICreated();
         }
@@ -47,18 +44,5 @@ export class Button extends Component{
 
     uICreated(): void {
         super.uICreated(); //first call base method
-        if(!this.callbackBinded){
-            this.callbackBinded = true;
-            (function (random, parent) {
-                document.addEventListener('DOMContentLoaded', function() {
-                    // @ts-ignore
-                    document.getElementById(random).click(function () {
-                        parent.callback();
-                    });
-                }, false);
-                    // @ts-ignore
-
-            })(super.random(), this);
-        }
     }
 }
