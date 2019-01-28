@@ -84,12 +84,25 @@ export class Grid extends Component {
 
     private generateAddColumnToRowButton(thisRow: HTMLTableRowElement, parent: Grid) {
         return new Button("+", '', function () {
-            let emptyColumn = new TableComponent();
-            emptyColumn.type = "trumbowyg";
-            if (thisRow == null) return;
-            parent.genTd(emptyColumn, thisRow);
-            parent.setDraggable();
+            if(Grid.rowColumnSpanCount(thisRow) < 11){
+                let emptyColumn = new TableComponent();
+                emptyColumn.type = "trumbowyg";
+                if (thisRow == null) return;
+                parent.genTd(emptyColumn, thisRow);
+                parent.setDraggable();
+            }
+
         });
+    }
+
+
+    private static rowColumnSpanCount(row: HTMLTableRowElement): number{
+        let count = 0;
+        for(let i = 0; i < row.cells.length; i++){
+            // @ts-ignore
+            count += row.cells.item(i).colSpan
+        }
+        return count;
     }
 
     /**
@@ -100,6 +113,8 @@ export class Grid extends Component {
     private genTd(column: TableComponent, row: HTMLTableRowElement): HTMLTableCellElement {
         let elem = row.insertCell(0);
         elem.classList.add('handle');
+        elem.colSpan = 12 - Grid.rowColumnSpanCount(row);
+
         switch (column.type) {
             case "text":
                 // @ts-ignore
