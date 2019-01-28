@@ -4,7 +4,7 @@ import {Component} from "Component";
 import {Random} from "Random";
 
 // @ts-ignore
-let $: jQuery = require("jquery");
+
 
 export class Button extends Component{
     // @ts-ignore
@@ -50,12 +50,14 @@ export class Button extends Component{
         if(!this.callbackBinded){
             this.callbackBinded = true;
             (function (random, parent) {
-                $(document).ready(function () {
+                document.addEventListener('DOMContentLoaded', function() {
                     // @ts-ignore
-                    $("#" + random).click(function () {
+                    document.getElementById(random).click(function () {
                         parent.callback();
                     });
-                });
+                }, false);
+                    // @ts-ignore
+
             })(super.random(), this);
         }
     }

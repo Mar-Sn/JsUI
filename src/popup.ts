@@ -3,7 +3,6 @@ import {Component} from "Component";
 // @ts-ignore
 import {Random} from "Random";
 // @ts-ignore
-let $: jQuery = require("jquery");
 
 
 export class Popup extends Component {

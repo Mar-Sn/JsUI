@@ -9,8 +9,6 @@ import {Input} from "Input";
 // @ts-ignore
 import {Draggable} from "Draggable";
 
-// @ts-ignore
-let $: jQuery = require("jquery");
 
 export class Table extends Component {
     private readonly headers: string[];
@@ -241,7 +239,8 @@ export class Table extends Component {
         let _row = this.genTr(row);
 
         if (super.domLoaded()) {
-            $("#" + super.random() + " tbody").append(_row);
+            // @ts-ignore
+            document.getElementById(super.random()).append(_row);
             if (row.length > 0) {
                 // @ts-ignore
                 super.children().forEach(child => {
