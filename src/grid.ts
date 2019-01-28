@@ -11,8 +11,6 @@ import {Draggable} from "Draggable";
 // @ts-ignore
 import {Button} from "Button";
 
-// @ts-ignore
-let $: jQuery = require("jquery");
 
 export class Grid extends Component {
 
@@ -315,10 +313,9 @@ export class Grid extends Component {
     public addRow(row: TableComponent[]) {
 
         super.addChild(row);
-        let _row = this.generateRow(row, this.rows.length);
+        this.generateRow(row, this.rows.length);
 
         if (super.domLoaded()) {
-            $("#" + super.random() + " tbody").append(_row);
             if (row.length > 0) {
                 // @ts-ignore
                 super.children.forEach(child => {
