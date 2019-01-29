@@ -23,8 +23,9 @@ export class Button extends Component{
         this.button = document.createElement("button");
         this.button.id = super.random();
         this.button.innerHTML = name;
-        if(typeof classes === "string"){
-            this.button.className = classes;
+        this.button.classList.add("jsUiButton");
+        if(typeof classes === "string" && classes !== ""){
+            this.button.classList.add(classes);
         }else if(typeof classes === "object"){
             let parent = this;
             classes.forEach(function(item){

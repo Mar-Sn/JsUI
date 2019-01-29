@@ -4,19 +4,12 @@ import {Component} from "Component";
 import {Random} from "Random";
 
 export class Input extends Component {
-
-    readonly name: string;
+    public readonly name: string;
     private readonly type: string;
     private readonly value: any;
     private readonly placeholder: string;
-
-
-    private isLoaded: boolean = false;
-
     private callBacks: { (value: any): void; }[] = [];
-
     private readonly input: HTMLInputElement | HTMLSelectElement | undefined;
-
 
     constructor(name: string, type: string, value: any, placeholder: string) {
         super();
@@ -57,19 +50,7 @@ export class Input extends Component {
             this.input.placeholder = this.placeholder;
             this.input.type = this.type;
         }
-        (function (parent) {
-            if (parent.input == null) return;
-            window.addEventListener('load', function () {
-                if (parent.ready()) {
-                    parent.uICreated();
-                }
-            });
-        })(this);
-    }
-
-
-    private ready(): Boolean {
-        return document.readyState.toString() === "complete"
+        this.bindOnchange();
     }
 
     /**
@@ -102,79 +83,67 @@ export class Input extends Component {
     }
 
     private bindOnchange() {
-        (function (parent) {
+        let parent = this;
 
-            if (parent.input == null) return;
+        if (parent.input == null) return;
 
-            if (parent.type === "boolean") {
+        if (parent.type === "boolean") {
+            // @ts-ignore
+            parent.input.addEventListener("onchange", function () {
                 // @ts-ignore
-                parent.input.addEventListener("onchange", function () {
-                    // @ts-ignore
-                    let value = input.value;
-
-                    for (let i = 0; i < parent.callBacks.length; i++) {
-                        if (value === "false")
-                            parent.callBacks[i](false);
-                        else
-                            parent.callBacks[i](true);
-                    }
+                let value = input.value;
+                parent.callBacks.forEach(function (callback: { (value: any): void; }){
+                    if (value === "false")
+                        callback(false);
+                    else
+                        callback(true);
                 });
-            } else if (parent.type === "date" || parent.type === "datetime") {
+            });
+        } else if (parent.type === "date" || parent.type === "datetime") {
+            // @ts-ignore
+            parent.input.addEventListener("onchange", function () {
                 // @ts-ignore
-                parent.input.addEventListener("onchange", function () {
-                    // @ts-ignore
-                    let value = input.value;
-
-                    for (let i = 0; i < parent.callBacks.length; i++) {
-                        parent.callBacks[i](value);
-                    }
+                let value = input.value;
+                parent.callBacks.forEach(function (callback: { (value: any): void; }){
+                        callback(value);
                 });
-            } else if (parent.type === "number") {
+            });
+        } else if (parent.type === "number") {
+            // @ts-ignore
+            parent.input.addEventListener("onchange", function () {
                 // @ts-ignore
-                parent.input.addEventListener("onchange", function () {
-                    // @ts-ignore
-                    let value = Number(input.value);
+                let value = Number(input.value);
 
-                    for (let i = 0; i < parent.callBacks.length; i++) {
-                        parent.callBacks[i](value);
+                for (let i = 0; i < parent.callBacks.length; i++) {
+                    parent.callBacks[i](value);
+                }
+            });
+        } else {
+            // @ts-ignore TODO
+            parent.input.addEventListener("onkeypress", function () {
+
+                // @ts-ignore
+                let value = input.value + String.fromCharCode(event.which);
+                for (let i = 0; i < parent.callBacks.length; i++) {
+                    switch (parent.type) {
+                        case "number":
+                            parent.callBacks[i](Number(value));
+                            break;
+                        case "text":
+                            parent.callBacks[i](value);
+                            break;
+                        default:
+                            parent.callBacks[i](value);
+                            break;
                     }
-                });
-            } else {
-                // @ts-ignore TODO
-                parent.input.addEventListener("onkeypress", function () {
 
-                    // @ts-ignore
-                    let value = input.value + String.fromCharCode(event.which);
-                    for (let i = 0; i < parent.callBacks.length; i++) {
-                        switch (parent.type) {
-                            case "number":
-                                parent.callBacks[i](Number(value));
-                                break;
-                            case "text":
-                                parent.callBacks[i](value);
-                                break;
-                            default:
-                                parent.callBacks[i](value);
-                                break;
-                        }
-
-                    }
-                });
-            }
-        })(this);
+                }
+            });
+        }
     }
 
     uICreated(): void {
-        // @ts-ignore
-        if (typeof this.input === "undefined" || this.input == null) return;
 
-        if (!this.isLoaded && this.ready()) {
-            this.isLoaded = true;
-            //do nothing
-
-            this.bindOnchange();
-
-        }
     }
 
 }
