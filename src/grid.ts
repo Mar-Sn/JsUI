@@ -56,6 +56,18 @@ export class Grid extends Component {
 
         this.tBody = this.gridElement.createTBody();
         this.generateRows();
+        let row = this.tBody.insertRow(0);
+        var index = 13
+
+
+        let emptyColumn = new TableComponent();
+        emptyColumn.type = "invis";
+        if (row == null) return;
+        for(var i = 0; i < index; i++) {
+            this.genTd(emptyColumn, row).colSpan = 1;
+            this.setDraggable();
+        }
+
     }
 
     /**
@@ -181,6 +193,10 @@ export class Grid extends Component {
                     elem.innerHTML = column.value;
                     break;
                 }
+            case "invis":
+                elem.classList.add('invis');
+                break;
+
             default:
                 break;
         }
@@ -195,6 +211,11 @@ export class Grid extends Component {
 
         input.onChange(function (data: number) {
             elem.colSpan = data;
+            if(data <= 1){
+                elem.colSpan = 1;
+                input.setValue(1);
+            }
+
         });
         input.getElement().classList.add("colspan-edit");
 
