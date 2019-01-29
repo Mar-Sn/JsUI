@@ -11,6 +11,18 @@ import {Draggable} from "Draggable";
 // @ts-ignore
 import {Button} from "Button";
 
+// @ts-ignore
+import {Popup} from "Popup";
+
+// @ts-ignore
+import {trumbowyg} from "trumbowyg";
+
+// @ts-ignore
+//let __trumbowyg = require("trumbowyg");
+
+// @ts-ignore
+let $: jQuery = require("jquery");
+
 
 export class Grid extends Component {
 
@@ -29,11 +41,14 @@ export class Grid extends Component {
         this.gridData = gridData;
 
         this.gridElement = document.createElement("table");
-        if(typeof classes === "string"){
+
+        this.gridElement.classList.add("jsUiGrid");
+
+        if (typeof classes === "string" && classes !== "") {
             this.gridElement.classList.add(classes);
-        }else if(typeof classes === "object"){
+        } else if (typeof classes === "object") {
             let parent = this;
-            classes.forEach(function(item){
+            classes.forEach(function (item) {
                 // @ts-ignore
                 parent.gridElement.classList.add(item);
             });
@@ -51,7 +66,7 @@ export class Grid extends Component {
      * @returns {string}
      * @private
      */
-    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement | null{
+    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement | null {
 
         let parent = this;
 
@@ -82,7 +97,7 @@ export class Grid extends Component {
 
     private generateAddColumnToRowButton(thisRow: HTMLTableRowElement, parent: Grid) {
         return new Button("+", '', function () {
-            if(Grid.rowColumnSpanCount(thisRow) < 11){
+            if (Grid.rowColumnSpanCount(thisRow) <= 11) {
                 let emptyColumn = new TableComponent();
                 emptyColumn.type = "trumbowyg";
                 if (thisRow == null) return;
@@ -94,9 +109,9 @@ export class Grid extends Component {
     }
 
 
-    private static rowColumnSpanCount(row: HTMLTableRowElement): number{
+    private static rowColumnSpanCount(row: HTMLTableRowElement): number {
         let count = 0;
-        for(let i = 0; i < row.cells.length; i++){
+        for (let i = 0; i < row.cells.length; i++) {
             // @ts-ignore
             count += row.cells.item(i).colSpan
         }
@@ -151,22 +166,7 @@ export class Grid extends Component {
                 super.addChild(_input);
                 break;
             case "trumbowyg":
-                column.value = 12;
-                elem.colSpan = 12;
-                let input = this.getInput(column, "number");
-
-                input.onChange(function(data: number){
-                    elem.colSpan = data;
-                });
-                let edit = document.createElement("div");
-                edit.classList.add("edit");
-
-                let amount = document.createElement("div");
-                amount.classList.add("amount");
-                amount.appendChild(input.getElement());
-                edit.appendChild(amount);
-
-                elem.appendChild(edit);
+                let input = this.generateTrumbowyg(column, elem);
                 super.addChild(input);
                 break;
             case "readonly":
@@ -186,6 +186,53 @@ export class Grid extends Component {
         return elem;
     }
 
+
+    private generateTrumbowyg(column: TableComponent, elem: HTMLTableCellElement) {
+        column.value = 12;
+        elem.colSpan = 12;
+        let input = this.getInput(column, "number");
+
+        input.onChange(function (data: number) {
+            elem.colSpan = data;
+        });
+        input.getElement().classList.add("colspan-edit");
+
+        let edit = document.createElement("div");
+        edit.classList.add("edit");
+
+        let content = document.createElement("div");
+        content.classList.add("content");
+        content.innerHTML = "";
+
+        let amount = document.createElement("div");
+        amount.classList.add("amount");
+        amount.appendChild(input.getElement());
+        edit.appendChild(amount);
+
+        try {
+            // @ts-ignore
+            let ___ignore__ = new trumbowyg();
+        } catch (e) {
+            //ignore
+        }
+
+        content.addEventListener("click", function(){
+            let popup = new Popup('edit content', function () {
+                let html = $(editor).trumbowyg('html');
+                content.innerHTML = html;
+            });
+            let editor = document.createElement("div");
+            popup.getElement().getElementsByClassName("popup-body").item(0).appendChild(editor);
+            popup.show();
+            $(editor).trumbowyg({
+                content: content.innerHTML
+            });
+        });
+
+        elem.appendChild(edit);
+        elem.appendChild(content);
+        return input;
+    }
 
     /**
      * Get an input based on tableCompontent
@@ -247,7 +294,7 @@ export class Grid extends Component {
         let parent = this;
         let addRow = new Button("add", '', function () {
             if (parent.gridElement != null) {
-                let higherThanNull = parent.gridElement.rows.length -1;
+                let higherThanNull = parent.gridElement.rows.length - 1;
                 if (higherThanNull < 0) higherThanNull = 0;
                 parent.generateRow([], higherThanNull);
                 parent.setDraggable();
@@ -338,7 +385,7 @@ export class Grid extends Component {
 
 
     getElement(): HTMLElement | null {
-        if(typeof this.gridElement === "undefined") return null;
+        if (typeof this.gridElement === "undefined") return null;
         return this.gridElement;
     }
 

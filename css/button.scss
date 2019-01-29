@@ -25,7 +25,7 @@
   }
 }
 
-.button, button, input[type="submit"] {
+.button, .jsUiButton, input[type="submit"] {
   border: 1px solid #3b5c86;
   box-shadow: inset 0 -2px 0 0 #204f86;
   background: #3777ad;
@@ -81,13 +81,5 @@
   }
   &.success {
     @include good();
-  }
-}
-.mce-tinymce{
-  button{
-    /**restore */
-    border: inherit;
-    background: inherit;
-    box-shadow: inherit;
   }
 }

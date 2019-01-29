@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="css/panel.css" type="text/css">
     <link rel="stylesheet" href="css/table.css" type="text/css">
     <link rel="stylesheet" href="css/button.css" type="text/css">
+    <link rel="stylesheet" href="css/popup.css" type="text/css">
+    <link rel="stylesheet" href="css/grid.css" type="text/css">
+    <link rel="stylesheet" href="lib/libs/trumbowyg/dist/ui/trumbowyg.min.css">
     <script type="application/javascript" src="/lib/requirejs.js"></script>
     <script>
         require.config({
@@ -23,7 +26,14 @@
                 Component: 'component',
                 TableComponent: 'table_component',
                 Draggable: 'libs/table-dragger/table-dragger.min',
-                Moments: 'libs/moment-timezone/moment-timezone.min'
+                Moments: 'libs/moment-timezone/moment-timezone.min',
+                trumbowyg: 'libs/trumbowyg/dist/trumbowyg.min'
+            },
+            shim:{
+                'trumbowyg': {
+                    deps: ['jquery'],
+                    exports: 'trumbowyg'
+                }
             }
         });
         require(['jquery', 'Popup', 'Panel', 'FieldSetInput', 'Table', 'Button', 'Grid', 'TableComponent'], function ($, Popup, Panel, FieldSetInput, Table, Button, Grid, TableComponent) {
@@ -102,10 +112,6 @@
             var panel3 = new Panel.Panel("Panel3", ["Test","custom","compontent"]);
             panel3.set(table2);
 
-            popup.append(panel);
-            popup.append(panel1);
-            popup.append(panel2);
-            popup.append(panel3);
 
 
             var panel4 = new Panel.Panel("Panel 4", ["Test","grid"]);
@@ -115,10 +121,13 @@
 
             var grid = new Grid.Grid('grid', gridDate);
             panel4.set(grid);
-            popup.append(panel4);
 
-
-            popup.show();
+            var body = document.getElementsByTagName("body").item(0);
+            body.appendChild(panel.getElement());
+            body.appendChild(panel1.getElement());
+            body.appendChild(panel2.getElement());
+            body.appendChild(panel3.getElement());
+            body.appendChild(panel4.getElement());
 
             window.testObject = object;
         });

@@ -1,0 +1,31 @@
+table.jsUiGrid{
+  tbody{
+    tr:not(.new-row-target){
+      td{
+        min-width: 150px;
+        padding: 0;
+        .edit{
+          padding-left: 5px;
+          padding-top: 5px;
+          padding-bottom: 5px;
+          .amount{
+            input.colspan-edit{
+              width: 30px;
+            }
+          }
+        }
+        .content{
+          width: 100%;
+          min-height: 40px;
+          padding: 2px;
+          border: 1px solid #ededed;
+          cursor: pointer;
+          display: inline-table;
+          &:hover{
+            background-color: #ededed;
+          }
+        }
+      }
+    }
+  }
+}
