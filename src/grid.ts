@@ -100,6 +100,7 @@ export class Grid extends Component {
             if (Grid.rowColumnSpanCount(thisRow) <= 11) {
                 let emptyColumn = new TableComponent();
                 emptyColumn.type = "trumbowyg";
+                emptyColumn.key = "colspan";
                 if (thisRow == null) return;
                 parent.genTd(emptyColumn, thisRow);
                 parent.setDraggable();
@@ -242,6 +243,9 @@ export class Grid extends Component {
      * @param type
      */
     private getInput(column: TableComponent, type: string): Input {
+        if (typeof column.mappedValue === "undefined" || column.mappedValue === null) {
+            column.mappedValue = {}
+        }
         let input = new Input(column.key, type, column.value, "");
 
         if (typeof column.mappedValue === "undefined") {
@@ -258,7 +262,11 @@ export class Grid extends Component {
                     column.mappedValue[column.key] = column.value !== "false";
                     break;
                 case "number":
-                    column.mappedValue[column.key] = Number(column.value);
+                    if(typeof column.value === "number"){
+                        column.mappedValue[column.key] = column.value;
+                    }else{
+                        column.mappedValue[column.key] = Number(column.value);
+                    }
                     break;
                 default:
                     column.mappedValue[column.key] = column.value;
@@ -269,9 +277,6 @@ export class Grid extends Component {
         (function (item) {
             // @ts-ignore
             input.onChange(function (data) {
-                if (typeof item.mappedValue === "undefined") {
-                    item.mappedValue = {}
-                }
                 item.mappedValue[item.key] = data;
                 console.log(item.mappedValue[item.key]);
             });
