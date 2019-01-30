@@ -28,6 +28,13 @@ table.jsUiGrid{
             background-color: #ededed;
           }
         }
+
+        &:last-child{
+          //always with plus
+          width: 50px;
+          min-width: 50px;
+          padding: 5px;
+        }
       }
     }
   }
