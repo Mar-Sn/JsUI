@@ -12,6 +12,9 @@ table.jsUiGrid{
             input.colspan-edit{
               width: 30px;
             }
+            &:after{
+              content: " / 12";
+            }
           }
         }
         .content{
