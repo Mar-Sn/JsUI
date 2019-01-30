@@ -80,7 +80,6 @@ export class Grid extends Component {
         let row = this.tBody.insertRow(index);
         if (addButton) {
             let addColumn = this.generateAddColumnToRowButton(row, parent);
-
             let tableComponent = new TableComponent();
             tableComponent.component = addColumn;
             tableComponent.type = "readonly";
@@ -114,7 +113,6 @@ export class Grid extends Component {
 
         });
     }
-
 
     private static rowColumnSpanCount(row: HTMLTableRowElement): number {
         let count = 0;
@@ -262,9 +260,8 @@ export class Grid extends Component {
             let editor = document.createElement("div");
             popup.getElement().getElementsByClassName("popup-body").item(0).appendChild(editor);
             popup.show();
-            $(editor).trumbowyg({
-                content: content.innerHTML
-            });
+            $(editor).trumbowyg();
+            $(editor).trumbowyg('html', content.innerHTML);
         });
 
         wrap.appendChild(edit);
