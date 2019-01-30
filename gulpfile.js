@@ -143,10 +143,13 @@ gulp.task('build', gulp.parallel(
     ])
 );
 
+gulp.task('watch-scss', function () {
+    gulp.watch('css/**/*.scss', gulp.series(['copy-sass', 'compile-sass', 'copy-css']));
+});
+
 gulp.task('watch', function () {
     gulp.watch('src/**/*.ts', gulp.series('build'));
     gulp.watch('test/index.html', gulp.series('build'));
-    gulp.watch('css/**/*.scss', gulp.series('build'));
 });
 
-gulp.task('server', gulp.parallel(['connect', 'watch']));
+gulp.task('server', gulp.parallel(['connect', 'watch','watch-scss']));
