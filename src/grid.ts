@@ -107,7 +107,8 @@ export class Grid extends Component {
                 emptyColumn.type = "trumbowyg";
                 emptyColumn.key = "colspan";
                 if (thisRow == null) return;
-                parent.genTd(emptyColumn, thisRow, 12 - Grid.rowColumnSpanCount(thisRow));
+                let amount = 13 - Grid.rowColumnSpanCount(thisRow);
+                parent.genTd(emptyColumn, thisRow, amount);
                 parent.setDraggable();
             }
 
@@ -173,7 +174,7 @@ export class Grid extends Component {
                 super.addChild(_input);
                 break;
             case "trumbowyg":
-                let input = this.generateTrumbowyg(column, elem);
+                let input = this.generateTrumbowyg(column, row, elem);
                 super.addChild(input);
                 break;
             case "readonly":
@@ -194,13 +195,25 @@ export class Grid extends Component {
     }
 
 
-    private generateTrumbowyg(column: TableComponent, elem: HTMLTableCellElement) {
-        column.value = 12;
-        elem.colSpan = 12;
+    private generateTrumbowyg(column: TableComponent, row: HTMLTableRowElement, elem: HTMLTableCellElement) {
+        column.value = elem.colSpan;
         let input = this.getInput(column, "number");
 
         input.onChange(function (data: number) {
+            let old = elem.colSpan;
             elem.colSpan = data;
+            if (Grid.rowColumnSpanCount(row) > 13) {
+                elem.colSpan = old;
+                input.setValue(old);
+            }
+            if (data < 1) {
+                input.setValue(1);
+                elem.colSpan = data;
+            }
+            if (data > 12) {
+                input.setValue(12);
+                elem.colSpan = data;
+            }
         });
         input.getElement().classList.add("colspan-edit");
 
@@ -223,7 +236,7 @@ export class Grid extends Component {
             //ignore
         }
 
-        content.addEventListener("click", function(){
+        content.addEventListener("click", function () {
             let popup = new Popup('edit content', function () {
                 let html = $(editor).trumbowyg('html');
                 content.innerHTML = html;
@@ -268,9 +281,9 @@ export class Grid extends Component {
                     column.mappedValue[column.key] = column.value !== "false";
                     break;
                 case "number":
-                    if(typeof column.value === "number"){
+                    if (typeof column.value === "number") {
                         column.mappedValue[column.key] = column.value;
-                    }else{
+                    } else {
                         column.mappedValue[column.key] = Number(column.value);
                     }
                     break;
@@ -320,7 +333,7 @@ export class Grid extends Component {
             newRowComponent.component = addRow;
             newRowComponent.type = "readonly";
 
-            let newElem = parent.generateRow([newRowComponent], parent.rows.length, false);
+            let newElem = parent.generateRow([newRowComponent], -1, false);
             // @ts-ignore
             newElem.classList.add('new-row-target');
         }

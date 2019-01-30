@@ -144,4 +144,9 @@ export class Input extends Component {
 
     }
 
+    setValue(value: any) {
+        if(typeof this.input !== "undefined"){
+            this.input.value = value;
+        }
+    }
 }
