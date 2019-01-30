@@ -8,7 +8,7 @@ import {Random} from "Random";
 export class Popup extends Component {
 
     private readonly popup: HTMLDivElement;
-    private body: HTMLDivElement;
+    private readonly body: HTMLDivElement;
 
     constructor(header: string, onclose: () => void) {
         super();

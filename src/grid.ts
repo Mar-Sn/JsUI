@@ -80,7 +80,7 @@ export class Grid extends Component {
             tableComponent.component = addColumn;
             tableComponent.type = "readonly";
 
-            this.genTd(tableComponent, row);
+            this.genTd(tableComponent, row, 1);
 
         }
 
@@ -97,12 +97,12 @@ export class Grid extends Component {
 
     private generateAddColumnToRowButton(thisRow: HTMLTableRowElement, parent: Grid) {
         return new Button("+", '', function () {
-            if (Grid.rowColumnSpanCount(thisRow) <= 11) {
+            if (Grid.rowColumnSpanCount(thisRow) <= 12) {
                 let emptyColumn = new TableComponent();
                 emptyColumn.type = "trumbowyg";
                 emptyColumn.key = "colspan";
                 if (thisRow == null) return;
-                parent.genTd(emptyColumn, thisRow);
+                parent.genTd(emptyColumn, thisRow, 12 - Grid.rowColumnSpanCount(thisRow));
                 parent.setDraggable();
             }
 
@@ -123,11 +123,12 @@ export class Grid extends Component {
      * Gen a TD element with input or readonly
      * @param column
      * @param row
+     * @param colspan
      */
-    private genTd(column: TableComponent, row: HTMLTableRowElement): HTMLTableCellElement {
+    private genTd(column: TableComponent, row: HTMLTableRowElement, colspan: number = 12): HTMLTableCellElement {
         let elem = row.insertCell(0);
         elem.classList.add('handle');
-        elem.colSpan = 12 - Grid.rowColumnSpanCount(row);
+        elem.colSpan = colspan;
 
         switch (column.type) {
             case "text":
