@@ -132,7 +132,11 @@ export class Grid extends Component {
      * @param colspan
      */
     private genTd(column: TableComponent, row: HTMLTableRowElement, colspan: number = 12): HTMLTableCellElement {
-        let elem = row.insertCell(0);
+        let insertPosition = row.cells.length - 1;
+        if(insertPosition < 0){
+            insertPosition = 0;
+        }
+        let elem = row.insertCell(insertPosition);
         elem.classList.add('handle');
         elem.colSpan = colspan;
 
@@ -217,17 +221,31 @@ export class Grid extends Component {
         });
         input.getElement().classList.add("colspan-edit");
 
+        let wrap = document.createElement("div");
+        wrap.classList.add("wrap");
+
         let edit = document.createElement("div");
         edit.classList.add("edit");
+
+        let close = document.createElement("div");
+        close.classList.add("close");
+        close.innerText = "x";
+        close.addEventListener("click", function () {
+            elem.remove();
+        });
+        let contentWrap = document.createElement("div");
+        contentWrap.classList.add("content-wrap");
 
         let content = document.createElement("div");
         content.classList.add("content");
         content.innerHTML = "";
+        contentWrap.appendChild(content);
 
         let amount = document.createElement("div");
         amount.classList.add("amount");
         amount.appendChild(input.getElement());
         edit.appendChild(amount);
+        edit.appendChild(close);
 
         try {
             // @ts-ignore
@@ -236,7 +254,7 @@ export class Grid extends Component {
             //ignore
         }
 
-        content.addEventListener("click", function () {
+        contentWrap.addEventListener("click", function () {
             let popup = new Popup('edit content', function () {
                 let html = $(editor).trumbowyg('html');
                 content.innerHTML = html;
@@ -249,8 +267,9 @@ export class Grid extends Component {
             });
         });
 
-        elem.appendChild(edit);
-        elem.appendChild(content);
+        wrap.appendChild(edit);
+        wrap.appendChild(contentWrap);
+        elem.appendChild(wrap);
         return input;
     }
 

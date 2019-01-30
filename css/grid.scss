@@ -1,44 +1,86 @@
-table.jsUiGrid{
-  tbody{
-    tr.invisible{
+$ultralightGrey: #ededed;
+$ultraDark: #181818;
+$dark: #343434;
+
+table.jsUiGrid {
+  tbody {
+    tr.invisible {
       height: 0;
-      td{
+
+      td {
         height: 0;
         padding: 0;
         border-spacing: 0;
         border: 0;
       }
     }
-    tr:not(.new-row-target){
-      td{
+
+    tr:not(.new-row-target) {
+      td {
         min-width: 150px;
         padding: 0;
-        .edit{
-          padding-left: 5px;
-          padding-top: 5px;
-          padding-bottom: 5px;
-          .amount{
-            input.colspan-edit{
-              width: 30px;
+
+        .wrap {
+          display: table;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+
+          .edit {
+            padding-left: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            position: relative;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 8%;
+            min-height: 20px;
+
+            .amount {
+              font-size: 12px;
+
+              input.colspan-edit {
+                width: 30px;
+              }
+
+              &:after {
+                content: " / 12";
+              }
             }
-            &:after{
-              content: " / 12";
+
+            .close {
+              position: absolute;
+              right: 6px;
+              top: 2px;
+              font-size: 20px;
+              cursor: pointer;
+              color: $dark;
+              font-family: "Lucida Console", Monaco, monospace;
+
+              &:hover {
+                color: black;
+              }
             }
           }
-        }
-        .content{
-          width: 100%;
-          min-height: 40px;
-          padding: 2px;
-          border: 1px solid #ededed;
-          cursor: pointer;
-          display: inline-table;
-          &:hover{
-            background-color: #ededed;
+
+          .content-wrap {
+            padding: 4px;
+            border-top: 1px solid $ultralightGrey;
+            cursor: pointer;
+
+            .content {
+              width: 100%;
+              min-height: 40px;
+              height: 92%;
+              display: inline-block;
+            }
+
+            &:hover {
+              background-color: $ultralightGrey;
+            }
           }
         }
 
-        &:last-child{
+        &:last-child {
           //always with plus
           width: 50px;
           min-width: 50px;
