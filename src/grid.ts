@@ -55,6 +55,11 @@ export class Grid extends Component {
         }
 
         this.tBody = this.gridElement.createTBody();
+        let firstRow = this.tBody.insertRow(0);
+        firstRow.classList.add("invisible");
+        for (let i = 0; i < 13; i++) {
+            firstRow.insertCell(0);
+        }
         this.generateRows();
     }
 
