@@ -28,7 +28,7 @@ export class Div extends Component{
      * Add a component or HTMLElement as child to this div
      * @param innerElement
      */
-    public addElement(innerElement: Component | HTMLElement){
+    public addElement(innerElement: Component | HTMLElement): Div{
         let asComponent: Component | null = innerElement instanceof Component ? (<Component>innerElement) : null;
         let asHTMLElement: HTMLElement | null = innerElement instanceof HTMLElement ? (<HTMLElement> innerElement) : null;
         if(asComponent != null){
@@ -38,6 +38,7 @@ export class Div extends Component{
         if(asHTMLElement != null){
             this._div.appendChild(asHTMLElement);
         }
+        return this;
     }
 
     getElement(): HTMLElement | null {
