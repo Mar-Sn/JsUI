@@ -121,6 +121,9 @@
 
             var grid = new Grid.Grid('grid', gridDate);
             panel4.set(grid);
+            panel4.append(new Button.Button('Grid data to console','', function(){
+                console.log(grid.getData());
+            }));
 
             var body = document.getElementsByTagName("body").item(0);
             body.appendChild(panel.getElement());

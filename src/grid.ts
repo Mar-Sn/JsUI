@@ -131,7 +131,7 @@ export class Grid extends Component {
      */
     private genTd(column: TableComponent, row: HTMLTableRowElement, colspan: number = 12): HTMLTableCellElement {
         let insertPosition = row.cells.length - 1;
-        if(insertPosition < 0){
+        if (insertPosition < 0) {
             insertPosition = 0;
         }
         let elem = row.insertCell(insertPosition);
@@ -424,6 +424,38 @@ export class Grid extends Component {
     }
 
 
+    /**
+     * Get all data from the grid as {GridData}
+     */
+    public getData(): GridData {
+        let rowCount = this.tBody.rows.length;
+        let gridData = new GridData();
+
+        for (let i = 1; i < rowCount - 1; i++) { //ignore first row and last row
+            let row = new GridDataRow();
+            let htmlRow = this.tBody.rows.item(i);
+            if (htmlRow != null) {
+                let columnCount = htmlRow.cells.length;
+                for(let x = 0; x < columnCount; x ++){
+                    let column = htmlRow.cells.item(x);
+                    if(column != null){
+                        let contentHtml = column.getElementsByClassName("content");
+                        let content = contentHtml.item(0);
+                        if(content != null){
+                            let gridDataSingle = new GridDataSingle(column.colSpan, content.innerHTML);
+                            row.addColumn(gridDataSingle);
+                        }
+                    }
+
+                }
+            }
+
+            gridData.addRow(row);
+        }
+        return gridData;
+    }
+
+
     getElement(): HTMLElement | null {
         if (typeof this.gridElement === "undefined") return null;
         return this.gridElement;
@@ -436,4 +468,58 @@ export class Grid extends Component {
     }
 
 
+}
+
+class GridData {
+    private readonly _rows: GridDataRow[];
+
+    constructor(rows: GridDataRow[] = []) {
+        this._rows = rows;
+    }
+
+    public addRow(row: GridDataRow) {
+        this._rows.push(row);
+    }
+
+
+    get rows(): GridDataRow[] {
+        return this._rows;
+    }
+}
+
+class GridDataRow {
+    private readonly _columns: GridDataSingle[];
+
+
+    constructor(columns: GridDataSingle[] = []) {
+        this._columns = columns;
+    }
+
+
+    get columns(): GridDataSingle[] {
+        return this._columns;
+    }
+
+    public addColumn(single: GridDataSingle){
+        this._columns.push(single);
+    }
+}
+
+class GridDataSingle {
+    private readonly _colspan: number;
+    private readonly _data: string;
+
+
+    constructor(colspan: number, data: string) {
+        this._colspan = colspan;
+        this._data = data;
+    }
+
+    get colspan(): number {
+        return this._colspan;
+    }
+
+    get data(): string {
+        return this._data;
+    }
 }
