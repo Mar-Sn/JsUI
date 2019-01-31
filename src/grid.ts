@@ -9,7 +9,7 @@ import {Input} from "Input";
 // @ts-ignore
 import {Draggable} from "Draggable";
 // @ts-ignore
-import {Button} from "Button";
+import {Button, Button} from "Button";
 
 // @ts-ignore
 import {Popup} from "Popup";
@@ -57,7 +57,7 @@ export class Grid extends Component {
         this.tBody = this.gridElement.createTBody();
         let firstRow = this.tBody.insertRow(0);
         firstRow.classList.add("invisible");
-        for (let i = 0; i < 13; i++) {
+        for (let i = 0; i < 14; i++) {
             firstRow.insertCell(0);
         }
         this.generateRows();
@@ -71,13 +71,14 @@ export class Grid extends Component {
      * @returns {string}
      * @private
      */
-    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement | null {
+    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true, delButton: boolean = true): HTMLTableRowElement | null {
 
         let parent = this;
 
         if (this.gridElement == null || this.tBody == null) return null;
 
         let row = this.tBody.insertRow(index);
+
         if (addButton) {
             let addColumn = this.generateAddColumnToRowButton(row, parent);
             let tableComponent = new TableComponent();
@@ -87,6 +88,14 @@ export class Grid extends Component {
             this.genTd(tableComponent, row, 1);
 
         }
+        if(delButton){
+            let delrow = this.genarateDeleteRowButton(row, parent);
+            let tableComponent = new TableComponent();
+            tableComponent.component = delrow;
+            tableComponent.type = "readonly";
+            this.genTd(tableComponent, row, 1);
+        }
+
 
 
         if (columns.length > 0) {
@@ -106,12 +115,22 @@ export class Grid extends Component {
                 emptyColumn.type = "trumbowyg";
                 emptyColumn.key = "colspan";
                 if (thisRow == null) return;
-                let amount = 13 - Grid.rowColumnSpanCount(thisRow);
+                let amount = 14 - Grid.rowColumnSpanCount(thisRow);
                 parent.genTd(emptyColumn, thisRow, amount);
                 parent.setDraggable();
             }
 
         });
+    }
+    private genarateDeleteRowButton(thisRow: HTMLTableRowElement, parent: Grid){
+        return new Button("DEL", "", function () {
+                let emptyColumn = new TableComponent();
+                emptyColumn.type = "delete";
+                emptyColumn.key = "colspan";
+                if (thisRow == null) return;
+                parent.genTd(emptyColumn, thisRow, 1);
+            })
+
     }
 
     private static rowColumnSpanCount(row: HTMLTableRowElement): number {
@@ -190,6 +209,11 @@ export class Grid extends Component {
                     elem.innerHTML = column.value;
                     break;
                 }
+            case "delete":
+                if(elem.parentElement !== null) {
+                    elem.parentElement.remove();
+                }
+                break;
             default:
                 break;
         }
