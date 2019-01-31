@@ -228,7 +228,7 @@ export class Grid extends Component {
         input.onChange(function (data: number) {
             let old = elem.colSpan;
             elem.colSpan = data;
-            if (Grid.rowColumnSpanCount(row) > 13) {
+            if (Grid.rowColumnSpanCount(row) > 14) {
                 elem.colSpan = old;
                 input.setValue(old);
             }
