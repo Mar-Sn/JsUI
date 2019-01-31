@@ -251,14 +251,14 @@ export class Grid extends Component {
 
         contentWrap.getElement().addEventListener("click", function () {
             let popup = new Popup('edit content', function () {
-                let html = $(editor).trumbowyg('html');
-                content.innerHTML = html;
+                let html = $(editor.getElement()).trumbowyg('html');
+                content.getElement().innerHTML = html;
             });
             let editor = new Div('');
             popup.getElement().getElementsByClassName("popup-body").item(0).appendChild(editor.getElement());
             popup.show();
             $(editor.getElement()).trumbowyg();
-            $(editor.getElement()).trumbowyg('html', content.innerHTML);
+            $(editor.getElement()).trumbowyg('html', content.getElement().innerHTML);
         });
 
         wrap.addElement(edit);
