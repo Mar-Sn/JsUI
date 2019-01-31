@@ -9,6 +9,10 @@
     "table-dragger": "^1.0.2",
     "trumbowyg": "^2.13.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mar-Sn/JsUI.git"
+  },
   "devDependencies": {
     "gulp": "^4.0.0",
     "gulp-minify": "^3.1.0",
