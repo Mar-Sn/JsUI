@@ -15,6 +15,9 @@ import {Button} from "Button";
 import {Popup} from "Popup";
 
 // @ts-ignore
+import {Div} from "Div";
+
+// @ts-ignore
 import {trumbowyg} from "trumbowyg";
 
 // @ts-ignore
@@ -219,31 +222,25 @@ export class Grid extends Component {
         });
         input.getElement().classList.add("colspan-edit");
 
-        let wrap = document.createElement("div");
-        wrap.classList.add("wrap");
+        let wrap = new Div('wrap');
+        let edit = new Div('edit');
 
-        let edit = document.createElement("div");
-        edit.classList.add("edit");
-
-        let close = document.createElement("div");
-        close.classList.add("close");
-        close.innerText = "x";
-        close.addEventListener("click", function () {
+        let close = new Div('close');
+        close.getElement().innerText = "x";
+        close.getElement().addEventListener("click", function () {
             elem.remove();
         });
-        let contentWrap = document.createElement("div");
-        contentWrap.classList.add("content-wrap");
+        let contentWrap = new Div('content-wrap');
 
-        let content = document.createElement("div");
-        content.classList.add("content");
-        content.innerHTML = "";
-        contentWrap.appendChild(content);
+        let content = new Div('content');
+        content.getElement().innerHTML = "";
 
-        let amount = document.createElement("div");
-        amount.classList.add("amount");
-        amount.appendChild(input.getElement());
-        edit.appendChild(amount);
-        edit.appendChild(close);
+        contentWrap.addElement(content);
+
+        let amount = new Div('amount');
+        amount.addElement(input);
+        edit.addElement(amount);
+        edit.addElement(close);
 
         try {
             // @ts-ignore
@@ -252,21 +249,21 @@ export class Grid extends Component {
             //ignore
         }
 
-        contentWrap.addEventListener("click", function () {
+        contentWrap.getElement().addEventListener("click", function () {
             let popup = new Popup('edit content', function () {
                 let html = $(editor).trumbowyg('html');
                 content.innerHTML = html;
             });
-            let editor = document.createElement("div");
-            popup.getElement().getElementsByClassName("popup-body").item(0).appendChild(editor);
+            let editor = new Div('');
+            popup.getElement().getElementsByClassName("popup-body").item(0).appendChild(editor.getElement());
             popup.show();
-            $(editor).trumbowyg();
-            $(editor).trumbowyg('html', content.innerHTML);
+            $(editor.getElement()).trumbowyg();
+            $(editor.getElement()).trumbowyg('html', content.innerHTML);
         });
 
-        wrap.appendChild(edit);
-        wrap.appendChild(contentWrap);
-        elem.appendChild(wrap);
+        wrap.addElement(edit);
+        wrap.addElement(contentWrap);
+        elem.appendChild(wrap.getElement());
         return input;
     }
 
