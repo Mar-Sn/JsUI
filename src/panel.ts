@@ -3,27 +3,31 @@ import {Component} from "Component";
 // @ts-ignore
 import {Random} from "Random";
 
-export class Panel extends Component{
+// @ts-ignore
+import {Div} from "Div";
+
+export class Panel extends Div{
     readonly title: string;
-    private readonly panel: HTMLDivElement;
+    private readonly panel: Div;
 
     constructor(title: string, classes: string | string[]) {
         super();
         this.title = title;
 
-        this.panel = document.createElement("div");
-        this.panel.id = super.random();
-        this.panel.className = "panel";
-
+        let mergedClasses = [];
+        mergedClasses.push("panel");
         if(typeof classes === "string"){
-            this.panel.classList.add(classes);
+            this.panel.mergedClasses.push(classes);
         }else if(typeof classes === "object"){
-            let parent = this;
             classes.forEach(function(item){
                 // @ts-ignore
-                parent.panel.classList.add(item);
+                mergedClasses.push(item);
             });
         }
+
+        this.panel = new Div(mergedClasses);
+
+
         // @ts-ignore
         super.children().forEach(child =>{
             this.panel.appendChild(child.getElement());
@@ -31,7 +35,7 @@ export class Panel extends Component{
     }
 
     getElement(): HTMLElement | null {
-        return this.panel;
+        return this.panel.getElement();
     }
 
     /**
@@ -42,7 +46,7 @@ export class Panel extends Component{
         super.clearChildren();
         super.addChild(component);
         this.panel.innerHTML = "";
-        this.panel.appendChild(component.getElement());
+        this.panel.addElement(component);
     };
 
     /**
@@ -51,7 +55,7 @@ export class Panel extends Component{
      */
     append(component: Component) {
         super.addChild(component);
-        this.panel.appendChild(component.getElement());
+        this.panel.addElement(component);
     };
 
 }

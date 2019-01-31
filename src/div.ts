@@ -34,10 +34,12 @@ export class Div extends Component{
         if(asComponent != null){
             // @ts-ignore //huh why?
             this._div.appendChild(asComponent.getElement());
+            super.addChild(asComponent);
         }
         if(asHTMLElement != null){
             this._div.appendChild(asHTMLElement);
         }
+
         return this;
     }
 
