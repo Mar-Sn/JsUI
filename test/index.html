@@ -22,6 +22,7 @@
                 Button: 'button',
                 Grid: 'grid',
                 Table: 'table',
+                Div: 'div',
                 Panel: 'panel',
                 Component: 'component',
                 TableComponent: 'table_component',
@@ -36,7 +37,8 @@
                 }
             }
         });
-        require(['jquery', 'Popup', 'Panel', 'FieldSetInput', 'Table', 'Button', 'Grid', 'TableComponent'], function ($, Popup, Panel, FieldSetInput, Table, Button, Grid, TableComponent) {
+        require(['jquery', 'Popup', 'Panel', 'FieldSetInput', 'Table', 'Button', 'Grid', 'TableComponent', 'Div'],
+            function ($, Popup, Panel, FieldSetInput, Table, Button, Grid, TableComponent, Div) {
             var popup = new Popup.Popup("test", function () {
                 //onclose
                 alert("popup closed");
@@ -131,6 +133,13 @@
             body.appendChild(panel2.getElement());
             body.appendChild(panel3.getElement());
             body.appendChild(panel4.getElement());
+
+
+            body.appendChild(new Div.Div('panel', new Div.Div('inner1'), new Div.Div('inner2'))
+                .addElement(new Div.Div('panel'))
+                .addElement(document.createElement("div")) //testing a plain JS HTMLElement
+                .getElement()
+            );
 
             window.testObject = object;
         });
