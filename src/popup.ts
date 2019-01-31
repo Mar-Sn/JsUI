@@ -1,65 +1,56 @@
 // @ts-ignore
 import {Component} from "Component";
+
 // @ts-ignore
-import {Random} from "Random";
-// @ts-ignore
+import {Div} from "Div";
 
 
-export class Popup extends Component {
+export class Popup extends Div {
 
-    private readonly popup: HTMLDivElement;
-    private readonly body: HTMLDivElement;
+    private readonly body: Div;
 
     constructor(header: string, onclose: () => void) {
-        super();
+        super('popup');
+        let _this = this;
 
-        let p = document.createElement("div");
-        p.id = super.random();
-        p.className = "popup";
+        let _header = new Div('header');
+        _header.getElement().innerText = header;
 
-        let inner = document.createElement("div");
-        inner.className = "inner";
-
-        let close = document.createElement("div");
-        close.className = "close";
-        close.addEventListener('click', function(){
+        this.body = new Div('popup-body');
+        let close = new Div('close');
+        close.getElement().addEventListener('click', function(){
             onclose();
-            p.remove();
+            _this.remove();
         });
-        inner.appendChild(close);
-
-        let _header = document.createElement("header");
-        _header.innerText = header;
-        inner.appendChild(_header);
-
-        this.body = document.createElement("div");
-        this.body.className = "popup-body";
-
-        let body = this.body;
-        // @ts-ignore
-        super.children().forEach(function(item){
-            body.appendChild(item.getElement());
-        });
-        inner.appendChild(body);
-
-        p.appendChild(inner);
-        this.popup = p;
+        super.addElement(new Div('inner').addElement(close).addElement(_header).addElement(this.body));
     }
 
 
     getElement(): HTMLElement | null {
-        return this.popup;
+        return super.getElement();
     }
 
+
+    /**
+     * Append popup to body
+     */
     public show() {
         if(this.getElement() != null){
             // @ts-ignore
-            document.getElementsByTagName('body').item(0).appendChild(this.popup);
+            document.getElementsByTagName('body').item(0).appendChild(this.getElement());
         }
         super.uICreated();
     };
 
-    
+
+    /**
+     * Remove the popup
+     */
+    public remove(){
+        super.getElement().remove();
+    }
+
+
     /**
      * overrides the current content
      * @param {Component} component
@@ -67,8 +58,8 @@ export class Popup extends Component {
     public set(component: Component) {
         super.clearChildren();
         super.addChild(component);
-        this.body.innerText = "";
-        this.body.appendChild(component.getElement());
+        this.body.getElement().innerHTML = "";
+        this.body.addElement(component);
     };
 
 
@@ -78,7 +69,7 @@ export class Popup extends Component {
      */
     public append(component: Component) {
         super.addChild(component);
-        this.body.appendChild(component.getElement());
+        this.body.addElement(component);
     };
 
 
