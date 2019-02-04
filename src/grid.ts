@@ -1,24 +1,11 @@
 // @ts-ignore
-import {Component} from "Component";
-// @ts-ignore
-import {TableComponent} from "TableComponent";
-// @ts-ignore
-import {Random} from "Random";
-// @ts-ignore
-import {Input} from "Input";
-// @ts-ignore
-import {Draggable} from "Draggable";
-// @ts-ignore
-import {Button} from "Button";
-
-// @ts-ignore
-import {Popup} from "Popup";
-
-// @ts-ignore
-import {Div} from "Div";
-
-// @ts-ignore
 import {trumbowyg} from "trumbowyg";
+import {Component} from "./component";
+import {TableComponent} from "./table_component";
+import {Div} from "./div";
+import {Input} from "./input";
+import {Button} from "./button";
+import {Popup} from "./popup";
 
 // @ts-ignore
 //let __trumbowyg = require("trumbowyg");
@@ -151,35 +138,46 @@ export class Grid extends Component {
             case "number":
                 // @ts-ignore
                 let _input = this.getInput(column, "number");
+                // @ts-ignore
                 elem.appendChild(_input.getElement());
+                // @ts-ignore
                 super.addChild(_input);
                 break;
             case "date":
                 // @ts-ignore
                 let _input = this.getInput(column, "date");
+                // @ts-ignore
                 elem.innerHTML = _input.getElement();
+                // @ts-ignore
                 super.addChild(_input);
                 break;
             case "datetime":
                 // @ts-ignore
                 let _input = this.getInput(column, "datetime-local");
+                // @ts-ignore
                 elem.appendChild(_input.getElement());
+                // @ts-ignore
                 super.addChild(_input);
                 break;
             case "datetime-local":
                 // @ts-ignore
                 let _input = this.getInput(column, "datetime-local");
+                // @ts-ignore
                 elem.appendChild(_input.getElement());
+                // @ts-ignore
                 super.addChild(_input);
                 break;
             case "boolean":
                 // @ts-ignore
                 let _input = this.getInput(column, "boolean");
+                // @ts-ignore
                 elem.innerHTML = _input.getElement();
+                // @ts-ignore
                 super.addChild(_input);
                 break;
             case "trumbowyg":
                 let input = this.generateTrumbowyg(column, row, elem);
+                // @ts-ignore
                 super.addChild(input);
                 break;
             case "readonly":
@@ -255,7 +253,10 @@ export class Grid extends Component {
                 content.getElement().innerHTML = html;
             });
             let editor = new Div('');
-            popup.getElement().getElementsByClassName("popup-body").item(0).appendChild(editor.getElement());
+            let popupBody = popup.getElement().getElementsByClassName("popup-body").item(0);
+            if(popupBody != null){
+                popupBody.appendChild(editor.getElement());
+            }
             popup.show();
             $(editor.getElement()).trumbowyg();
             $(editor.getElement()).trumbowyg('html', content.getElement().innerHTML);
@@ -396,7 +397,6 @@ export class Grid extends Component {
      */
     public addRow(row: TableComponent[]) {
 
-        super.addChild(row);
         this.generateRow(row, this.rows.length);
 
         if (super.domLoaded()) {
@@ -453,8 +453,8 @@ export class Grid extends Component {
     }
 
 
-    getElement(): HTMLElement | null {
-        if (typeof this.gridElement === "undefined") return null;
+    getElement(): HTMLElement {
+        if (typeof this.gridElement === "undefined") return document.createElement("table");
         return this.gridElement;
     }
 
@@ -467,7 +467,7 @@ export class Grid extends Component {
 
 }
 
-class GridData {
+export class GridData {
     private readonly _rows: GridDataRow[];
 
     constructor(rows: GridDataRow[] = []) {
@@ -484,7 +484,7 @@ class GridData {
     }
 }
 
-class GridDataRow {
+export class GridDataRow {
     private readonly _columns: GridDataSingle[];
 
 
@@ -502,7 +502,7 @@ class GridDataRow {
     }
 }
 
-class GridDataSingle {
+export class GridDataSingle {
     private readonly _colspan: number;
     private readonly _data: string;
 

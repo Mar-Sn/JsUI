@@ -1,11 +1,7 @@
-// @ts-ignore
-import {Component} from "Component";
-// @ts-ignore
-import {Random} from "Random";
-// @ts-ignore
-import {Input} from "Input";
+import {Component} from "./component";
+import {Input} from "./input";
 
-export class FieldSetInput extends Component{
+export class FieldSetInput extends Component {
 
     private readonly name: string;
     private readonly type: string;
@@ -35,11 +31,11 @@ export class FieldSetInput extends Component{
 
         this.fieldset = document.createElement("fieldset");
         this.fieldset.id = super.random();
-        if(typeof classes === "string"){
+        if (typeof classes === "string") {
             this.fieldset.className = classes;
-        }else if(typeof classes === "object"){
+        } else if (typeof classes === "object") {
             let parent = this;
-            classes.forEach(function(item){
+            classes.forEach(function (item) {
                 // @ts-ignore
                 parent.fieldset.classList.add(item);
             });
@@ -50,15 +46,16 @@ export class FieldSetInput extends Component{
         this.label.appendChild(input.getElement());
         this.fieldset.appendChild(this.label);
     }
-    public getElement(): HTMLElement | null {
+
+    public getElement(): HTMLElement {
         return this.fieldset;
     }
 
     uICreated(): void {
-       super.uICreated();
+        super.uICreated();
     }
 
-    public onChange(callback: (any:any) => void){
+    public onChange(callback: (_any: any) => void) {
         this.child.onChange(callback);
     }
 

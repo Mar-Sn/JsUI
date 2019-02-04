@@ -1,7 +1,6 @@
-// @ts-ignore
-import {Component} from "Component";
+import {Component} from "./component";
 
-export class Div extends Component{
+export class Div extends Component {
     private readonly _div: HTMLElement;
 
     constructor(classes: string | string[], ...innerElement: Component[] | HTMLElement[]) {
@@ -17,8 +16,8 @@ export class Div extends Component{
             });
         }
 
-        if(typeof innerElement === "object" && innerElement.length > 0){
-            for(let i = 0; i < innerElement.length; i++){
+        if (typeof innerElement === "object" && innerElement.length > 0) {
+            for (let i = 0; i < innerElement.length; i++) {
                 this.addElement(innerElement[i]);
             }
         }
@@ -28,22 +27,22 @@ export class Div extends Component{
      * Add a component or HTMLElement as child to this div
      * @param innerElement
      */
-    public addElement(innerElement: Component | HTMLElement): Div{
+    public addElement(innerElement: Component | HTMLElement): Div {
         let asComponent: Component | null = innerElement instanceof Component ? (<Component>innerElement) : null;
-        let asHTMLElement: HTMLElement | null = innerElement instanceof HTMLElement ? (<HTMLElement> innerElement) : null;
-        if(asComponent != null){
+        let asHTMLElement: HTMLElement | null = innerElement instanceof HTMLElement ? (<HTMLElement>innerElement) : null;
+        if (asComponent != null) {
             // @ts-ignore //huh why?
             this._div.appendChild(asComponent.getElement());
             super.addChild(asComponent);
         }
-        if(asHTMLElement != null){
+        if (asHTMLElement != null) {
             this._div.appendChild(asHTMLElement);
         }
 
         return this;
     }
 
-    getElement(): HTMLElement | null {
+    getElement(): HTMLElement {
         return this._div;
     }
 }

@@ -1,14 +1,6 @@
-// @ts-ignore
-import {Component} from "Component";
-// @ts-ignore
-import {TableComponent} from "TableComponent";
-// @ts-ignore
-import {Random} from "Random";
-// @ts-ignore
-import {Input} from "Input";
-// @ts-ignore
-import {Draggable} from "Draggable";
-
+import {Component} from "./component";
+import {TableComponent} from "./table_component";
+import {Input} from "./input";
 
 export class Table extends Component {
     private readonly headers: string[];
@@ -23,7 +15,7 @@ export class Table extends Component {
     private readonly tHead: HTMLTableSectionElement;
     private readonly tBody: HTMLTableSectionElement;
 
-    constructor(headers: string[], classes: string | string[], baseArray: [] | undefined) {
+    constructor(headers: string[], classes: string | string[], baseArray: [] | undefined = undefined) {
         super();
         this.baseArray = baseArray;
         if (!Array.isArray(headers)) {
@@ -164,7 +156,7 @@ export class Table extends Component {
         return input;
     }
 
-    private genTh(header: string, row: HTMLTableRowElement): void {
+    private static genTh(header: string, row: HTMLTableRowElement): void {
         let th: HTMLTableHeaderCellElement = document.createElement("th");
         th.innerHTML = header;
         row.appendChild(th);
@@ -178,7 +170,7 @@ export class Table extends Component {
 
         if (this.headers.length > 0) {
             this.headers.forEach(header => {
-                this.genTh(header, row);
+                Table.genTh(header, row);
             });
         }
     }
@@ -261,7 +253,7 @@ export class Table extends Component {
         });
     }
 
-    public getElement(): HTMLElement | null {
+    public getElement(): HTMLElement {
         return this.table;
     }
 

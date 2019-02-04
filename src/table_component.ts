@@ -1,5 +1,4 @@
-// @ts-ignore
-import {Component} from "Component";
+import {Component} from "./component";
 
 export class TableComponent {
 
@@ -28,7 +27,7 @@ export class TableComponent {
 
     /**
      *
-     * @type {Component|null}
+     * @type {Component}
      */
-    public component: Component = null;
+    public component: Component | undefined;
 }

@@ -47,69 +47,77 @@ gulp.task('scripts', function (done) {
         .pipe(gulp.dest('target'));
 });
 
+gulp.task('scripts-test', function (done) {
+
+    return gulp.src("test/test.ts") // or tsProject.src()
+        .pipe(sourcemaps.init())
+        .pipe(ts({noImplicitAny: true, module: "umd"})).js
+        .pipe(sourcemaps.write({includeContent: false}))
+        .pipe(gulp.dest('test'));
+});
 
 
-gulp.task('dep-table-dragger', function(done){
+gulp.task('dep-table-dragger', function (done) {
     return gulp.src("node_modules/table-dragger/dist/**/*.js") // or tsProject.src()
         .pipe(gulp.dest('target/libs/table-dragger/'));
 });
 
-gulp.task('dep-moment-timezone', function(done){
+gulp.task('dep-moment-timezone', function (done) {
     return gulp.src("node_modules/moment-timezone/builds/moment-timezone.min.js")
         .pipe(gulp.dest('target/libs/moment-timezone/'));
 });
 
-gulp.task('dep-flatpickr', function(done){
+gulp.task('dep-flatpickr', function (done) {
     return gulp.src("node_modules/flatpickr/dist/flatpickr.min.js")
         .pipe(gulp.dest('target/libs/flatpickr/'));
 });
 
-gulp.task('dep-trumbowyg-js', function(done){
+gulp.task('dep-trumbowyg-js', function (done) {
     return gulp.src("node_modules/trumbowyg/**/*.js")
         .pipe(gulp.dest('target/libs/trumbowyg/'));
 });
 
-gulp.task('dep-trumbowyg-css', function(done){
+gulp.task('dep-trumbowyg-css', function (done) {
     return gulp.src("node_modules/trumbowyg/**/*.css")
         .pipe(gulp.dest('target/libs/trumbowyg/'));
 });
 
-gulp.task('dep-trumbowyg-svg', function(done){
+gulp.task('dep-trumbowyg-svg', function (done) {
     return gulp.src("node_modules/trumbowyg/**/*.svg")
         .pipe(gulp.dest('target/libs/trumbowyg/'));
 });
 
-gulp.task('dependencies', gulp.parallel(['dep-table-dragger', 'dep-moment-timezone', 'dep-flatpickr', 'dep-trumbowyg-js','dep-trumbowyg-css','dep-trumbowyg-svg']));
+gulp.task('dependencies', gulp.parallel(['dep-table-dragger', 'dep-moment-timezone', 'dep-flatpickr', 'dep-trumbowyg-js', 'dep-trumbowyg-css', 'dep-trumbowyg-svg']));
 
 
-gulp.task('move-js-to-test', function(){
+gulp.task('move-js-to-test', function () {
     return gulp.src("target/**/*.js")
         .pipe(gulp.dest('test/lib'));
 });
 
-gulp.task('move-css-to-test', function(){
+gulp.task('move-css-to-test', function () {
     return gulp.src("target/**/*.css")
         .pipe(gulp.dest('test/lib'));
 });
 
-gulp.task('move-ts-to-test', function(){
+gulp.task('move-ts-to-test', function () {
     return gulp.src("target/**/*.ts")
         .pipe(gulp.dest('test/lib'));
 });
 
-gulp.task('move-svg-to-test', function(){
+gulp.task('move-svg-to-test', function () {
     return gulp.src("target/**/*.svg")
         .pipe(gulp.dest('test/lib'));
 });
 
 
-gulp.task('move-libs-to-test', function(){
+gulp.task('move-libs-to-test', function () {
     return gulp.src("target/libs")
         .pipe(gulp.dest('test/lib'));
 });
 
 
-gulp.task('to-test', gulp.parallel(['move-js-to-test', 'move-ts-to-test', 'move-libs-to-test','move-css-to-test','move-svg-to-test']));
+gulp.task('to-test', gulp.parallel(['move-js-to-test', 'move-ts-to-test', 'move-libs-to-test', 'move-css-to-test', 'move-svg-to-test']));
 
 gulp.task('ugly', function (cb) {
     return pump([
@@ -137,10 +145,7 @@ gulp.task('connect', function () {
 
 
 gulp.task('build', gulp.parallel(
-    [
-    gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test']),
-    gulp.series(['copy-sass', 'compile-sass', 'copy-css'])
-    ])
+    [gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test', 'scripts-test'])])
 );
 
 gulp.task('watch-scss', function () {
@@ -149,7 +154,8 @@ gulp.task('watch-scss', function () {
 
 gulp.task('watch', function () {
     gulp.watch('src/**/*.ts', gulp.series('build'));
+    gulp.watch('test/test.ts', gulp.series('build'));
     gulp.watch('test/index.html', gulp.series('build'));
 });
 
-gulp.task('server', gulp.parallel(['connect', 'watch','watch-scss']));
+gulp.task('server', gulp.parallel(['connect', 'watch', 'watch-scss']));

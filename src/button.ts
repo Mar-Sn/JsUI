@@ -1,12 +1,6 @@
-// @ts-ignore
-import {Component} from "Component";
-// @ts-ignore
-import {Random} from "Random";
+import {Component} from "./component";
 
-// @ts-ignore
-
-
-export class Button extends Component{
+export class Button extends Component {
     // @ts-ignore
     private readonly html: string;
     private readonly button: HTMLButtonElement;
@@ -24,22 +18,22 @@ export class Button extends Component{
         this.button.id = super.random();
         this.button.innerHTML = name;
         this.button.classList.add("jsUiButton");
-        if(typeof classes === "string" && classes !== ""){
+        if (typeof classes === "string" && classes !== "") {
             this.button.classList.add(classes);
-        }else if(typeof classes === "object"){
+        } else if (typeof classes === "object") {
             let parent = this;
-            classes.forEach(function(item){
+            classes.forEach(function (item) {
                 // @ts-ignore
                 parent.button.classList.add(item);
             });
         }
         this.button.addEventListener("click", callback);
-        if(super.domLoaded()){
+        if (super.domLoaded()) {
             this.uICreated();
         }
     }
 
-    getElement(): HTMLElement | null {
+    getElement(): HTMLElement {
         return this.button;
     }
 

@@ -1,7 +1,6 @@
-// @ts-ignore
-import {Random} from "Random";
+import {Random} from "./random";
 
-export abstract class Component{
+export abstract class Component {
     private _random: string;
     private _domLoaded: boolean = false;
     private _children: Component[];
@@ -13,7 +12,7 @@ export abstract class Component{
 
 
     random(): string {
-        if(this._random == null){
+        if (this._random == null) {
             this._random = new Random(20).get();
         }
         return this._random;
@@ -24,13 +23,13 @@ export abstract class Component{
     }
 
     children(): Component[] {
-        if(this._children == null){
+        if (this._children == null) {
             this._children = [];
         }
         return this._children;
     }
 
-    clearChildren(): void{
+    clearChildren(): void {
         this._children = [];
     }
 
@@ -40,7 +39,7 @@ export abstract class Component{
             component.uICreated();//call uicreated since dom is loaded
     }
 
-    abstract getElement(): HTMLElement | null;
+    abstract getElement(): HTMLElement;
 
     uICreated(): void {
         this._domLoaded = true;

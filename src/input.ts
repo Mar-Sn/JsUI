@@ -1,5 +1,4 @@
-// @ts-ignore
-import {Component} from "Component";
+import {Component} from "./component";
 
 export class Input extends Component {
     public readonly name: string;
@@ -7,7 +6,7 @@ export class Input extends Component {
     private readonly value: any;
     private readonly placeholder: string;
     private callBacks: { (value: any): void; }[] = [];
-    private readonly input: HTMLInputElement | HTMLSelectElement | undefined;
+    private readonly input: HTMLInputElement | HTMLSelectElement;
 
     constructor(name: string, type: string, value: any, placeholder: string) {
         super();
@@ -55,7 +54,7 @@ export class Input extends Component {
      * add a callback action to this input
      * @param {() => void}callback
      */
-    public onChange(callback: () => void) {
+    public onChange(callback: (_any: any) => void) {
         this.callBacks.push(callback)
     };
 
@@ -75,8 +74,7 @@ export class Input extends Component {
         }
     }
 
-    getElement(): HTMLElement | null {
-        if (this.input == null) return null;
+    getElement(): HTMLElement {
         return this.input;
     }
 

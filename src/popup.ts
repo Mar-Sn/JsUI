@@ -1,9 +1,5 @@
-// @ts-ignore
-import {Component} from "Component";
-
-// @ts-ignore
-import {Div} from "Div";
-
+import {Div} from "./div";
+import {Component} from "./component";
 
 export class Popup extends Div {
 
@@ -26,7 +22,7 @@ export class Popup extends Div {
     }
 
 
-    getElement(): HTMLElement | null {
+    getElement(): HTMLElement{
         return super.getElement();
     }
 

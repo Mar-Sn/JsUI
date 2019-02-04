@@ -1,8 +1,5 @@
-// @ts-ignore
-import {Component} from "Component";
-
-// @ts-ignore
-import {Div} from "Div";
+import {Div} from "./div";
+import {Component} from "./component";
 
 export class Panel extends Div {
     readonly title: string;
@@ -19,7 +16,7 @@ export class Panel extends Div {
         this.title = title;
     }
 
-    getElement(): HTMLElement | null {
+    getElement(): HTMLElement{
         return super.getElement();
     }
 
