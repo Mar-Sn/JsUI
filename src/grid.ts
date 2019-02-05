@@ -6,6 +6,7 @@ import {Div} from "./div";
 import {Input} from "./input";
 import {Button} from "./button";
 import {Popup} from "./popup";
+import {GridAdapter, GridCellType, GridRow, SimpleGridCell} from "./grid_adapter";
 
 // @ts-ignore
 //let __trumbowyg = require("trumbowyg");
@@ -16,19 +17,18 @@ let $: jQuery = require("jquery");
 
 export class Grid extends Component {
 
-    private rows: TableComponent[][] = [];
     private dragger: any;
 
     // @ts-ignore
-    private gridData: string[][] | undefined;
+    private gridAdapter: GridAdapter;
 
 
     private readonly gridElement: HTMLTableElement | undefined;
     private readonly tBody: HTMLTableSectionElement;
 
-    constructor(classes: string | string[], gridData: [][] | undefined) {
+    constructor(classes: string | string[], gridAdapter: GridAdapter) {
         super();
-        this.gridData = gridData;
+        this.gridAdapter = gridAdapter;
 
         this.gridElement = document.createElement("table");
 
@@ -55,34 +55,38 @@ export class Grid extends Component {
 
     /**
      *
-     * @param {TableComponent[]} columns
-     * @param index
+     * @param rowIndex
      * @param addButton
      * @returns {string}
      * @private
      */
-    private generateRow(columns: TableComponent[], index: number, addButton: boolean = true): HTMLTableRowElement | null {
+    private generateRow(rowIndex: number, addButton: boolean = true, addToAdapter: boolean = true) {
 
         let parent = this;
 
         if (this.gridElement == null || this.tBody == null) return null;
 
-        let row = this.tBody.insertRow(index);
+        let row = this.tBody.insertRow(rowIndex);
+
+
         if (addButton) {
             let addColumn = this.generateAddColumnToRowButton(row, parent);
-            let tableComponent = new TableComponent('readonly','','', null, addColumn);
-            this.genTd(tableComponent, row, 1);
+            this.genTd(row, tableComponent, 1);
 
+            if(addToAdapter)
+                this.gridAdapter.addRow(new GridRow([new SimpleGridCell('', addColumn)]));
+        }else{
+            if(addToAdapter)
+                this.gridAdapter.addRow(new GridRow([new SimpleGridCell('')]));
         }
 
 
-        if (columns.length > 0) {
-            columns.forEach(column => {
-                this.genTd(column, row);
-            });
+
+        if (this.gridAdapter.columnCount(rowIndex) > 0) {
+            for (let x = 0; x < this.gridAdapter.columnCount(rowIndex); x++) {
+                this.genTd(row, x, rowIndex);
+            }
         }
-        this.rows.push(columns);
-        return row;
     };
 
 
@@ -114,7 +118,7 @@ export class Grid extends Component {
      * @param row
      * @param colspan
      */
-    private genTd(column: TableComponent, row: HTMLTableRowElement, colspan: number = 12): HTMLTableCellElement {
+    private genTd(row: HTMLTableRowElement, columnIndex: number, rowIndex: number, colspan: number = 12): HTMLTableCellElement {
         let insertPosition = row.cells.length - 1;
         if (insertPosition < 0) {
             insertPosition = 0;
@@ -123,51 +127,21 @@ export class Grid extends Component {
         elem.classList.add('handle');
         elem.colSpan = colspan;
 
+        let cellType = this.gridAdapter.getComponent(columnIndex, rowIndex);
+
+        switch (cellType) {
+            case GridCellType.HTML:
+            case GridCellType.INPUT:
+            case GridCellType.TRUMBOWYG:
+                this.generateTrumbowyg(elem, columnIndex, rowIndex);
+                break;
+        }
+
         switch (column.type) {
             case "text":
                 // @ts-ignore
                 let _input = this.getInput(column, "text");
                 elem.appendChild(_input.getElement());
-                super.addChild(_input);
-                break;
-            case "number":
-                // @ts-ignore
-                let _input = this.getInput(column, "number");
-                // @ts-ignore
-                elem.appendChild(_input.getElement());
-                // @ts-ignore
-                super.addChild(_input);
-                break;
-            case "date":
-                // @ts-ignore
-                let _input = this.getInput(column, "date");
-                // @ts-ignore
-                elem.innerHTML = _input.getElement();
-                // @ts-ignore
-                super.addChild(_input);
-                break;
-            case "datetime":
-                // @ts-ignore
-                let _input = this.getInput(column, "datetime-local");
-                // @ts-ignore
-                elem.appendChild(_input.getElement());
-                // @ts-ignore
-                super.addChild(_input);
-                break;
-            case "datetime-local":
-                // @ts-ignore
-                let _input = this.getInput(column, "datetime-local");
-                // @ts-ignore
-                elem.appendChild(_input.getElement());
-                // @ts-ignore
-                super.addChild(_input);
-                break;
-            case "boolean":
-                // @ts-ignore
-                let _input = this.getInput(column, "boolean");
-                // @ts-ignore
-                elem.innerHTML = _input.getElement();
-                // @ts-ignore
                 super.addChild(_input);
                 break;
             case "trumbowyg":
@@ -193,7 +167,7 @@ export class Grid extends Component {
     }
 
 
-    private generateTrumbowyg(column: TableComponent, row: HTMLTableRowElement, elem: HTMLTableCellElement) {
+    private generateTrumbowyg(elem: HTMLTableCellElement, rowIndex: number, column: number) {
         column.value = elem.colSpan;
         let input = this.getInput(column, "number");
 
@@ -249,7 +223,7 @@ export class Grid extends Component {
             });
             let editor = new Div('');
             let popupBody = popup.getElement().getElementsByClassName("popup-body").item(0);
-            if(popupBody != null){
+            if (popupBody != null) {
                 popupBody.appendChild(editor.getElement());
             }
             popup.show();
@@ -316,9 +290,8 @@ export class Grid extends Component {
 
 
     private generateRows() {
-
-        for (let i = 0; i < this.rows.length; i++) {
-            this.generateRow(this.rows[i], i);
+        for (let i = 0; i < this.gridAdapter.rowCount(); i++) {
+            this.generateRow(i);
         }
         this.generateLastRow();
     }
@@ -338,7 +311,7 @@ export class Grid extends Component {
 
         if (parent.gridElement != null) {
 
-            let newRowComponent = new TableComponent('readonly','', '', null, addRow);
+            let newRowComponent = new TableComponent('readonly', '', '', null, addRow);
 
             let newElem = parent.generateRow([newRowComponent], -1, false);
             // @ts-ignore
@@ -426,12 +399,12 @@ export class Grid extends Component {
             let htmlRow = this.tBody.rows.item(i);
             if (htmlRow != null) {
                 let columnCount = htmlRow.cells.length;
-                for(let x = 0; x < columnCount; x ++){
+                for (let x = 0; x < columnCount; x++) {
                     let column = htmlRow.cells.item(x);
-                    if(column != null){
+                    if (column != null) {
                         let contentHtml = column.getElementsByClassName("content");
                         let content = contentHtml.item(0);
-                        if(content != null){
+                        if (content != null) {
                             let gridDataSingle = new GridDataSingle(column.colSpan, content.innerHTML);
                             row.addColumn(gridDataSingle);
                         }
@@ -490,7 +463,7 @@ export class GridDataRow {
         return this._columns;
     }
 
-    public addColumn(single: GridDataSingle){
+    public addColumn(single: GridDataSingle) {
         this._columns.push(single);
     }
 }
