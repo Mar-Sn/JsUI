@@ -1,9 +1,15 @@
 {
   "name": "@mar-sn/js-ui",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
+    "flatpickr": "^4.5.2",
+    "moment-timezone": "^0.5.23",
+    "table-dragger": "^1.0.2",
+    "trumbowyg": "^2.13.0"
+  },
+  "devDependencies": {
     "gulp": "^4.0.0",
     "gulp-minify": "^3.1.0",
     "gulp-rename": "^1.4.0",
@@ -14,18 +20,14 @@
     "del": "^3.0.0",
     "gulp-connect": "^5.7.0",
     "gulp-sass": "^4.0.2",
-    "node-sass": "^4.11.0",
-    "flatpickr": "^4.5.2",
-    "moment-timezone": "^0.5.23",
-    "table-dragger": "^1.0.2",
-    "trumbowyg": "^2.13.0"
+    "node-sass": "^4.11.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Mar-Sn/JsUI.git"
   },
   "scripts": {
-    "install": "gulp"
+
   },
   "author": "Martin Broers",
   "license": "MIT"
