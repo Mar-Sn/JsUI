@@ -14,8 +14,15 @@ sass.compiler = require('node-sass');
 
 
 gulp.task('clean', function (done) {
-    return del(['target/*']);
+    del.sync(['target/**']);
+    done();
 });
+
+gulp.task('clean-dist', function (done) {
+    del.sync(['dist/**']);
+    done();
+});
+
 
 gulp.task('copy-source', function (done) {
     return gulp.src("src/**/*.ts")
@@ -23,7 +30,7 @@ gulp.task('copy-source', function (done) {
 });
 
 gulp.task('copy-sass', function (done) {
-    return gulp.src("css/*.scss")
+    return gulp.src("css/**/*.scss")
         .pipe(gulp.dest('target/css/'));
 });
 
@@ -144,10 +151,13 @@ gulp.task('connect', function () {
 });
 
 
-gulp.task('default', gulp.series([gulp.parallel([
-    gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test', 'scripts-test']),
-    gulp.series(['copy-sass', 'compile-sass', 'copy-css'])
-    ]), gulp.series('dist')])
+gulp.task('default', gulp.series([
+    gulp.series('clean-dist','clean'),
+    gulp.parallel([
+        gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test', 'scripts-test']),
+        gulp.series(['copy-sass', 'compile-sass', 'copy-css'])
+    ]),
+    gulp.series('dist')])
 );
 
 gulp.task('watch-scss', function () {
