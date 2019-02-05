@@ -15,15 +15,8 @@ const tsProject = ts.createProject('tsconfig.json');
 
 
 gulp.task('clean', function (done) {
-    del.sync(['target/**']);
-    done();
+    return del(['target/**','dist/**'], {force: true});
 });
-
-gulp.task('clean-dist', function (done) {
-    del.sync(['dist/**']);
-    done();
-});
-
 
 gulp.task('copy-source', function (done) {
     return gulp.src("src/**/*.ts")
@@ -153,13 +146,15 @@ gulp.task('connect', function () {
 
 
 gulp.task('default', gulp.series([
-    gulp.series('clean-dist','clean'),
+    gulp.series('clean'),
     gulp.parallel([
-        gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test', 'scripts-test']),
+        gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies']),
         gulp.series(['copy-sass', 'compile-sass', 'copy-css'])
     ]),
     gulp.series('dist')])
 );
+
+gulp.task('build', gulp.series('default','dependencies', 'to-test', 'scripts-test'));
 
 gulp.task('watch-scss', function () {
     gulp.watch('css/**/*.scss', gulp.series(['copy-sass', 'compile-sass', 'copy-css']));
