@@ -1,7 +1,6 @@
 const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const minify = require('gulp-minify');
-const tsProject = ts.createProject('tsconfig.json');
 const uglify = require('gulp-uglify');
 const pump = require('pump');
 const rename = require("gulp-rename");
@@ -11,6 +10,8 @@ const del = require('del');
 const sass = require('gulp-sass');
 
 sass.compiler = require('node-sass');
+
+const tsProject = ts.createProject('tsconfig.json');
 
 
 gulp.task('clean', function (done) {
