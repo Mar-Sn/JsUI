@@ -28,7 +28,7 @@
     "pug": "^2.0.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "gulp"
   },
   "author": "Martin Broers",
   "license": "MIT"

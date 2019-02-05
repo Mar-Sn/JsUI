@@ -38,6 +38,7 @@ gulp.task('copy-css', function (done) {
         .pipe(gulp.dest('test/css/'));
 });
 
+
 gulp.task('scripts', function (done) {
 
     return gulp.src("target/**/*.ts") // or tsProject.src()
@@ -131,9 +132,8 @@ gulp.task('ugly', function (cb) {
 });
 
 gulp.task('dist', function (cb) {
-    gulp.src("target/*.min.js")
+    return gulp.src("target/**")
         .pipe(gulp.dest('dist'));
-    cb();
 });
 
 gulp.task('connect', function () {
@@ -144,8 +144,10 @@ gulp.task('connect', function () {
 });
 
 
-gulp.task('build', gulp.parallel(
-    [gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test', 'scripts-test'])])
+gulp.task('default', gulp.series([gulp.parallel([
+    gulp.series(['clean', 'copy-source', 'scripts', 'ugly', 'dependencies', 'to-test', 'scripts-test']),
+    gulp.series(['copy-sass', 'compile-sass', 'copy-css'])
+    ]), gulp.series('dist')])
 );
 
 gulp.task('watch-scss', function () {
@@ -153,9 +155,9 @@ gulp.task('watch-scss', function () {
 });
 
 gulp.task('watch', function () {
-    gulp.watch('src/**/*.ts', gulp.series('build'));
-    gulp.watch('test/test.ts', gulp.series('build'));
-    gulp.watch('test/index.html', gulp.series('build'));
+    gulp.watch('src/**/*.ts', gulp.series('default'));
+    gulp.watch('test/test.ts', gulp.series('default'));
+    gulp.watch('test/index.html', gulp.series('default'));
 });
 
 gulp.task('server', gulp.parallel(['connect', 'watch', 'watch-scss']));
