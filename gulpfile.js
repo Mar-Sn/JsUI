@@ -51,7 +51,7 @@ gulp.task('scripts-test', function (done) {
 
     return gulp.src("test/test.ts") // or tsProject.src()
         .pipe(sourcemaps.init())
-        .pipe(ts({noImplicitAny: true, module: "umd"})).js
+        .pipe(ts({noImplicitAny: true, module: "umd", target: "es5"})).js
         .pipe(sourcemaps.write({includeContent: false}))
         .pipe(gulp.dest('test'));
 });

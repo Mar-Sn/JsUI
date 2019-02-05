@@ -8,6 +8,7 @@ export class TableComponent {
      */
     public key: string = "";
 
+
     /**
      *
      * @type {Object}
@@ -29,5 +30,14 @@ export class TableComponent {
      *
      * @type {Component}
      */
-    public component: Component | undefined;
+    public component: Component | undefined = undefined;
+
+
+    constructor(type: string, key: string, value: any, mappedValue: any | null = {}, component: Component | undefined = undefined) {
+        this.key = key;
+        this.value = value;
+        this.mappedValue = mappedValue;
+        this.type = type;
+        this.component = component;
+    }
 }

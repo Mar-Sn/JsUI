@@ -1,26 +1,22 @@
 import {Component} from "./component";
-import {TableComponent} from "./table_component";
 import {Input} from "./input";
+import {CellType, TableAdapter} from "./table_adapter";
 
 export class Table extends Component {
     private readonly headers: string[];
 
-    private rows: TableComponent[][] = [];
     private dragger: any;
 
-    private baseArray: [] | undefined;
+    private readonly tableAdapter: TableAdapter;
 
     private readonly table: HTMLTableElement;
     // @ts-ignore
     private readonly tHead: HTMLTableSectionElement;
-    private readonly tBody: HTMLTableSectionElement;
+    private tBody: HTMLTableSectionElement;
 
-    constructor(headers: string[], classes: string | string[], baseArray: [] | undefined = undefined) {
+    constructor(headers: string[], classes: string | string[], tableAdapter: TableAdapter) {
         super();
-        this.baseArray = baseArray;
-        if (!Array.isArray(headers)) {
-            throw "Table arg1 -> headers should be an array!";
-        }
+        this.tableAdapter = tableAdapter;
         this.headers = headers;
         this.table = document.createElement("table");
         this.table.id = super.random();
@@ -40,118 +36,68 @@ export class Table extends Component {
         this.genRows()
     }
 
-    /**
-     *
-     * @param {TableComponent[]} columns
-     * @returns {string}
-     * @private
-     */
-    private genTr(columns: TableComponent[]) {
-        let arrayLength = columns.length;
-        if (arrayLength > 0) {
-            let row = this.tBody.insertRow();
 
-            columns.forEach(data => {
-                this.genTd(data, row)
-            });
-
-            if (arrayLength < this.headers.length) {
-                for (let i = 0; i < this.headers.length - arrayLength; i++) {
-                    row.insertCell(); //add empty cells to fill up
-                }
-            }
+    private genTr(row: HTMLTableRowElement, rowIndex: number) {
+        for (let x = 0; x < this.tableAdapter.columnCount(); x++) {
+            this.genTd(row, rowIndex, x);
         }
     };
 
 
-    /**
-     * Gen a TD element with input or readonly
-     * @param data
-     * @param row
-     */
-    private genTd(data: TableComponent, row: HTMLTableRowElement): void {
+    private genTd(row: HTMLTableRowElement, rowIndex: number, columnIndex: number): void {
         let td = row.insertCell();
         td.className = "handle";
-        switch (data.type) {
-            case "text":
-                td.appendChild(this.getInput(data, "text").getElement());
-                break;
-            case "number":
-                td.appendChild(this.getInput(data, "number").getElement());
-                break;
-            case "date":
-                td.appendChild(this.getInput(data, "date").getElement());
-                break;
-            case "datetime":
-                td.appendChild(this.getInput(data, "datetime-local").getElement());
-                break;
-            case "datetime-local":
-                td.appendChild(this.getInput(data, "datetime-local").getElement());
-                break;
-            case "boolean":
-                td.appendChild(this.getInput(data, "boolean").getElement());
-                break;
-            case "readonly":
-                if (data.component != null) {
-                    //user set compontent himself
-                    super.addChild(data.component);
+        let cellType = this.tableAdapter.getType(columnIndex, rowIndex);
 
-                    td.appendChild(data.component.getElement());
+        switch (cellType) {
+            case CellType.BOOLEAN:
+                td.appendChild(this.getInput("boolean", columnIndex, rowIndex).getElement());
+                break;
+            case CellType.DATETIME:
+                td.appendChild(this.getInput("date", columnIndex, rowIndex).getElement());
+                break;
+            case CellType.NUMBER:
+                td.appendChild(this.getInput("number", columnIndex, rowIndex).getElement());
+                break;
+            case CellType.TEXT:
+                td.appendChild(this.getInput("text", columnIndex, rowIndex).getElement());
+                break;
+            case CellType.READONLY:
+                let component = this.tableAdapter.getComponent(columnIndex, rowIndex);
+                if (component != null) {
+                    td.appendChild(component.getElement());
                 } else {
-                    td.innerHTML = data.value;
+                    if (this.tableAdapter.getValue(columnIndex, rowIndex) != null) {
+                        // @ts-ignore stupid
+                        td.innerHTML = this.tableAdapter.getValue(columnIndex, rowIndex);
+                    }
                 }
                 break;
             default:
-                td.innerHTML = data.value;
+                if (this.tableAdapter.getValue(columnIndex, rowIndex) != null) {
+                    // @ts-ignore stupid
+                    td.innerHTML = this.tableAdapter.getValue(columnIndex, rowIndex);
+                }
                 break;
         }
+
     }
 
 
-    /**
-     * Get an input based on tableCompontent
-     * Registers Component to children
-     *
-     * @param column
-     * @param type
-     */
-    private getInput(column: TableComponent, type: string): Input {
-        let input = new Input(column.key, type, column.value, "");
+    private getInput(type: string, columnIndex: number, rowIndex: number): Input {
+        let key = this.tableAdapter.getName(columnIndex, rowIndex);
+        let value = this.tableAdapter.getValue(columnIndex, rowIndex);
 
-        if (typeof column.mappedValue === "undefined") {
-            column.mappedValue = {}
-        }
+        let input = new Input(key, type, value, "");
 
-        if (type === "boolean") {
-            column.mappedValue[column.key] = false;
-        }
-
-        if (typeof column.value !== "undefined" && column.value !== null) {
-            switch (type) {
-                case "boolean":
-                    column.mappedValue[column.key] = column.value !== "false";
-                    break;
-                case "number":
-                    column.mappedValue[column.key] = Number(column.value);
-                    break;
-                default:
-                    column.mappedValue[column.key] = column.value;
-                    break;
-            }
-        }
-
-        (function (item) {
+        (function (adapter: TableAdapter) {
             // @ts-ignore
             input.onChange(function (data) {
-                if (typeof item.mappedValue === "undefined") {
-                    item.mappedValue = {}
-                }
-                item.mappedValue[item.key] = data;
-                console.log(item.mappedValue[item.key]);
+                adapter.setValue(columnIndex, rowIndex, data);
+                console.log(data);
             });
-        }(column));
+        }(this.tableAdapter));
 
-        column.component = input;
         super.addChild(input);
         return input;
     }
@@ -175,16 +121,15 @@ export class Table extends Component {
         }
     }
 
-    private genRows() {
-        let total = "";
-        this.rows.forEach(row => {
-            total += this.genTr(row);
-        });
-        return total;
+    private genRows(): void {
+        for (let y = 0; y < this.tableAdapter.rowCount(); y++) {
+            let row = this.tBody.insertRow();
+            this.genTr(row, y);
+        }
     }
 
     private setDraggable() {
-        if (super.domLoaded() && this.rows.length > 0) {
+        if (super.domLoaded() && this.tableAdapter.rowCount() > 0) {
             try {
                 //@ts-ignore
                 let ___ignore = Draggable;
@@ -204,17 +149,7 @@ export class Table extends Component {
                 parent.dragger.on('drop', function (from: number, to: number) {
                     from--;
                     to--;
-                    let copyFrom = parent.rows[from];
-                    parent.rows[from] = parent.rows[to];
-                    parent.rows[to] = copyFrom;
-
-                    if (typeof parent.baseArray !== 'undefined') {
-                        let copyFromBase = parent.baseArray[from];
-                        parent.baseArray[from] = parent.baseArray[to];
-                        parent.baseArray[to] = copyFromBase;
-                    }
-                    console.log(from);
-                    console.log(to);
+                    parent.tableAdapter.moveIndex(from, to);
                 });
             })(this);
 
@@ -222,35 +157,16 @@ export class Table extends Component {
     }
 
     /**
-     * Add a row to the table
-     * @param {TableComponent[]} row
+     * Trigger data changed
+     *
+     * TODO optimize
      */
-    public addRow(row: TableComponent[]) {
-
-        this.rows.push(row);
-        let _row = this.genTr(row);
-
-        if (super.domLoaded()) {
-            // @ts-ignore
-            document.getElementById(super.random()).append(_row);
-            if (row.length > 0) {
-                // @ts-ignore
-                super.children().forEach(child => {
-                    child.uICreated();
-                });
-            }
-            this.setDraggable();
-        }
-    };
-
-    /**
-     * Add rows to the table
-     * @param {TableComponent[][]} rows
-     */
-    public addRows(rows: TableComponent[][]) {
-        rows.forEach(row => {
-            this.addRow(row);
+    public dataChanged(): void {
+        super.children().forEach(function (item: Component) {
+            item.getElement().remove();
         });
+        this.tBody = this.table.createTBody();
+        this.genRows();
     }
 
     public getElement(): HTMLElement {

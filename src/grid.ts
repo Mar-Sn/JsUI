@@ -70,10 +70,7 @@ export class Grid extends Component {
         let row = this.tBody.insertRow(index);
         if (addButton) {
             let addColumn = this.generateAddColumnToRowButton(row, parent);
-            let tableComponent = new TableComponent();
-            tableComponent.component = addColumn;
-            tableComponent.type = "readonly";
-
+            let tableComponent = new TableComponent('','','readonly', null, addColumn);
             this.genTd(tableComponent, row, 1);
 
         }
@@ -92,9 +89,7 @@ export class Grid extends Component {
     private generateAddColumnToRowButton(thisRow: HTMLTableRowElement, parent: Grid) {
         return new Button("+", '', function () {
             if (Grid.rowColumnSpanCount(thisRow) <= 12) {
-                let emptyColumn = new TableComponent();
-                emptyColumn.type = "trumbowyg";
-                emptyColumn.key = "colspan";
+                let emptyColumn = new TableComponent('colspan', '', 'colspan');
                 if (thisRow == null) return;
                 let amount = 13 - Grid.rowColumnSpanCount(thisRow);
                 parent.genTd(emptyColumn, thisRow, amount);
@@ -343,9 +338,7 @@ export class Grid extends Component {
 
         if (parent.gridElement != null) {
 
-            let newRowComponent = new TableComponent();
-            newRowComponent.component = addRow;
-            newRowComponent.type = "readonly";
+            let newRowComponent = new TableComponent('','', 'readonly', null, addRow);
 
             let newElem = parent.generateRow([newRowComponent], -1, false);
             // @ts-ignore
