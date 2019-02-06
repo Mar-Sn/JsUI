@@ -165,6 +165,7 @@ export class Table extends Component {
         super.children().forEach(function (item: Component) {
             item.getElement().remove();
         });
+        this.tBody.remove();
         this.tBody = this.table.createTBody();
         this.genRows();
     }
