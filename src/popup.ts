@@ -26,6 +26,9 @@ export class Popup extends Div {
         return super.getElement();
     }
 
+    public getBody():Div{
+        return this.body;
+    }
 
     /**
      * Append popup to body

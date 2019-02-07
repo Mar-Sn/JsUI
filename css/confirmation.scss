@@ -1,0 +1,113 @@
+.popup.confirm {
+  .inner {
+    width: 35%;
+    padding: 0;
+    height: 200px;
+    .header {
+      font-size: 30px;
+      padding-top: 5px;
+      padding-left: 20px;
+      position: relative;
+      top: 10px;
+    }
+    .popup-body {
+      position: relative;
+      width: 100%;
+      height: 83%;
+      .body-text {
+        padding-top: 0;
+        padding-left: 20px;
+        position: relative;
+        top: 50px;
+      }
+      .body-component{
+        max-width: 45%;
+        position: absolute;
+        bottom: 11px;
+        left: 5px;
+        width: auto;
+      }
+      .buttons {
+        width: 210px;
+        max-height: 40px;
+        position: absolute;
+        bottom: 10px;
+        right: 5px;
+      }
+      .accept {
+        width: 100px;
+        background-color: lawngreen;
+      }
+      .accept:hover {
+        background-color: #5FBE00;
+
+      }
+      .decline {
+        width: 100px;
+        background-color: red;
+      }
+      .decline:hover {
+        background-color: #C80000;
+      }
+    }
+
+  }
+}
+
+.popup.confirm.info {
+   .inner {
+
+     .header {
+
+     }
+     .popup-body {
+       .body-text {
+
+       }
+       .buttons {
+
+       }
+       .body-component {
+
+       }
+     }
+   }
+ }
+.popup.confirm.warn {
+  .inner {
+
+    .header {
+
+    }
+    .popup-body {
+      .body-text {
+
+      }
+      .buttons {
+
+      }
+      .body-component {
+
+      }
+    }
+  }
+}
+.popup.confirm.error {
+  .inner {
+
+    .header {
+
+    }
+    .popup-body {
+      .body-text {
+
+      }
+      .buttons {
+
+      }
+      .body-component {
+
+      }
+    }
+  }
+}

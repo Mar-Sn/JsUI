@@ -5,7 +5,10 @@ import {Table} from "./lib/table";
 import {Button} from "./lib/button";
 import {Div} from "./lib/Div";
 import {Grid} from "./lib/grid";
+import {Confirm} from "./lib/confirm";
+import {ConfirmType} from "./lib/confirm";
 import {CellType, SimpleTableAdapter, SimpleTableCell, TableData, TableRow} from "./lib/table_adapter";
+
 
 
 export class Test {
@@ -97,9 +100,36 @@ export class Test {
         let grid = new Grid('grid', gridDate);
         panel4.set(grid);
         panel4.append(new Button('Grid data to console', '', function () {
-            console.log(grid.getData());
+
         }));
 
+        let panel5 = new Panel("Panel5", ["test"]);
+        panel5.set(new Button("test", '', function () {
+            let test = new Confirm(ConfirmType.INFO, undefined, undefined,() => {
+                let accept =  new Confirm(ConfirmType.WARN, undefined, undefined, () => {
+
+                }, () => {
+                    let input_conf = new FieldSetInput('confirm', 'text', '', 'simple description', ['confirm', 'input'], '');
+                    let pop_com = new Confirm(ConfirmType.ERROR, undefined, "hoi", () => {});
+                    pop_com.addBodyComponent(input_conf);
+                    pop_com.show();
+                }, "accept", "error");
+                accept.show();
+            }, () => {
+                let decline =  new Confirm(ConfirmType.WARN, undefined, undefined, () => {
+                    let input_conf = new FieldSetInput('confirm', 'text', '', 'simple description', ['confirm', 'input'], '');
+                    let pop_com = new Confirm(ConfirmType.ERROR, undefined, "hoi", () => {});
+                    pop_com.addBodyComponent(input_conf);
+                    pop_com.show();
+
+                }, () => {
+
+                }, "accept", "error");
+                decline.show();
+            });
+            test.show();
+
+        }));
         let body = document.getElementsByTagName("body").item(0);
         if (body != null) {
             // @ts-ignore
@@ -112,6 +142,8 @@ export class Test {
             body.appendChild(panel3.getElement());
             // @ts-ignore
             body.appendChild(panel4.getElement());
+            // @ts-ignore
+            body.appendChild(panel5.getElement());
 
             let p = new Div('panel', new Div('inner1'), new Div('inner2'))
                 .addElement(new Div('panel'))
