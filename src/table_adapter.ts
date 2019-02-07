@@ -117,10 +117,14 @@ export class TableData {
 
     public addRow(row: TableRow) {
         this._rows.push(row);
+        row.index = this.rows.length;
     }
 
     public addRows(rows: TableRow[]) {
-        this._rows = this._rows.concat(rows);
+        for(let i = 0; i < rows.length; i++){
+            this._rows.push(rows[i]);
+            rows[i].index = this.rows.length;
+        }
     }
 
     /**
@@ -132,6 +136,7 @@ export class TableData {
         for (let i = 0; i < this._rows.length; i++) {
             if (index != i) {
                 copy.push(this._rows[i]);
+                this._rows[i].index = copy.length;
             }
         }
         this._rows = copy;
@@ -148,7 +153,7 @@ export class TableData {
 
 export class TableRow {
     private _cells: TableCell[];
-
+    private _index: number = -1;
 
     constructor(cells: TableCell[] | undefined = undefined) {
         if (typeof cells !== "undefined")
@@ -167,6 +172,14 @@ export class TableRow {
 
     set cells(value: TableCell[]) {
         this._cells = value;
+    }
+
+    set index(value: number) {
+        this._index = value;
+    }
+
+    get index(): number {
+        return this._index;
     }
 }
 
