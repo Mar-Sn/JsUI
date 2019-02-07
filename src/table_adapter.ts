@@ -109,9 +109,12 @@ export class TableData {
     private _rows: TableRow[];
 
     constructor(rows: TableRow[] | undefined = undefined) {
-        if (typeof rows !== "undefined")
+        if (typeof rows !== "undefined") {
             this._rows = rows;
-        else
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].setIndex(i + 1);
+            }
+        } else
             this._rows = [];
     }
 
@@ -121,7 +124,7 @@ export class TableData {
     }
 
     public addRows(rows: TableRow[]) {
-        for(let i = 0; i < rows.length; i++){
+        for (let i = 0; i < rows.length; i++) {
             this._rows.push(rows[i]);
             rows[i].setIndex(this.rows.length);
         }
@@ -134,7 +137,7 @@ export class TableData {
     public removeRow(index: number) {
         let copy = [];
         for (let i = 0; i < this._rows.length; i++) {
-            if (index != i) {
+            if (this._rows[i].index() != index) {
                 copy.push(this._rows[i]);
                 this._rows[i].setIndex(copy.length);
             }

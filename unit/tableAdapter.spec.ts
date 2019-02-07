@@ -19,6 +19,10 @@ describe("TableAdapter", () => {
             let tableData = new TableData([new TableRow(), new TableRow(), new TableRow(), new TableRow()]);
             tableData.removeRow(2);
             expect(tableData.rows.length).to.equal(3);
+        });
+        it("Row index should be correct after deletion of row", () => {
+            let tableData = new TableData([new TableRow(), new TableRow(), new TableRow(), new TableRow()]);
+            tableData.removeRow(2);
             expect(tableData.rows[2].index()).to.equal(3);
         });
     })
