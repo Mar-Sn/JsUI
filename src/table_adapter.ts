@@ -120,7 +120,7 @@ export class TableData {
     }
 
     public addRows(rows: TableRow[]) {
-        this._rows.concat(rows);
+        this._rows = this._rows.concat(rows);
     }
 
     /**
