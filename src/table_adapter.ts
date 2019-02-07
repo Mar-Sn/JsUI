@@ -63,7 +63,7 @@ export class SimpleTableAdapter implements TableAdapter {
     }
 
     columnCount(): number {
-        if(this.rowCount() > 0)
+        if (this.rowCount() > 0)
             return this.tableData.rows[0].cells.length;
         return -1;
     }
@@ -123,6 +123,20 @@ export class TableData {
         this._rows.concat(rows);
     }
 
+    /**
+     * Recreates the array without the index
+     * @param index
+     */
+    public removeRow(index: number) {
+        let copy = [];
+        for (let i = 0; i < this._rows.length; i++) {
+            if (index != i) {
+                copy.push(this._rows[i]);
+            }
+        }
+        this._rows = copy;
+    }
+
     get rows(): TableRow[] {
         return this._rows;
     }
@@ -159,13 +173,13 @@ export class TableRow {
 export abstract class TableCell { //used to be interface but typescript compile failes on array of SimpleTableCell
     abstract name(): string
 
-    abstract data(): any
+    abstract data<T>(): T
 
     abstract component(): Component | null
 
-    abstract type():CellType
+    abstract type(): CellType
 
-    abstract setData(data: any): void
+    abstract setData<T>(data: T): void
 }
 
 export class SimpleTableCell extends TableCell {
@@ -185,8 +199,8 @@ export class SimpleTableCell extends TableCell {
         return "";
     }
 
-    public data(): any {
-        return this._data;
+    public data<T>(): T {
+        return <T>this._data;
     }
 
     public component(): Component | null {
@@ -198,7 +212,7 @@ export class SimpleTableCell extends TableCell {
     }
 
 
-    setData(value: any) {
+    setData<T>(value: T) {
         this._data = value;
     }
 

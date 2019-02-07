@@ -10,24 +10,29 @@
     "trumbowyg": "^2.13.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.2.0",
+    "del": "^3.0.0",
     "gulp": "^4.0.0",
+    "gulp-connect": "^5.7.0",
     "gulp-minify": "^3.1.0",
     "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0",
     "gulp-uglify": "^3.0.1",
-    "typescript": "^3.2.2",
-    "del": "^3.0.0",
-    "gulp-connect": "^5.7.0",
-    "gulp-sass": "^4.0.2",
-    "node-sass": "^4.11.0"
+    "mocha": "^5.2.0",
+    "node-sass": "^4.11.0",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.2.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Mar-Sn/JsUI.git"
   },
   "scripts": {
-
+    "test": "./node_modules/.bin/mocha --compilers ts:ts-node/register ./unit/*.spec.ts"
   },
   "author": "Martin Broers",
   "license": "MIT"
