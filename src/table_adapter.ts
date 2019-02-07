@@ -117,13 +117,13 @@ export class TableData {
 
     public addRow(row: TableRow) {
         this._rows.push(row);
-        row.index = this.rows.length;
+        row.setIndex(this.rows.length);
     }
 
     public addRows(rows: TableRow[]) {
         for(let i = 0; i < rows.length; i++){
             this._rows.push(rows[i]);
-            rows[i].index = this.rows.length;
+            rows[i].setIndex(this.rows.length);
         }
     }
 
@@ -136,7 +136,7 @@ export class TableData {
         for (let i = 0; i < this._rows.length; i++) {
             if (index != i) {
                 copy.push(this._rows[i]);
-                this._rows[i].index = copy.length;
+                this._rows[i].setIndex(copy.length);
             }
         }
         this._rows = copy;
@@ -174,11 +174,11 @@ export class TableRow {
         this._cells = value;
     }
 
-    set index(value: number) {
+    setIndex(value: number) {
         this._index = value;
     }
 
-    get index(): number {
+    index(): number {
         return this._index;
     }
 }
