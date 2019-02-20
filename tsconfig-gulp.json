@@ -6,10 +6,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "declaration": true,
-    "module": "amd",
+    "module": "umd",
     "rootDir": "./src/",
     "sourceRoot": "./src/",
-    "outFile": "single/JsUI.js",
     "target": "es5",
     "sourceMap": true,
     "inlineSources": false

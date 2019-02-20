@@ -2,6 +2,7 @@
 node_modules/
 dist/
 target/
+single/
 /test/lib/
 /test/css/
 /test/test.js

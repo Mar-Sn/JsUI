@@ -11,7 +11,7 @@ const sass = require('gulp-sass');
 
 sass.compiler = require('node-sass');
 
-const tsProject = ts.createProject('tsconfig.json');
+const tsProject = ts.createProject('tsconfig-gulp.json');
 
 
 gulp.task('clean', function (done) {
@@ -133,7 +133,7 @@ gulp.task('ugly', function (cb) {
 });
 
 gulp.task('dist', function (cb) {
-    return gulp.src("target/**")
+    return gulp.src(["target/**/*",'single/**/*'])
         .pipe(gulp.dest('dist'));
 });
 
