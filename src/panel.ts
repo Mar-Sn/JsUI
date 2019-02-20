@@ -9,7 +9,7 @@ export class Panel extends Div {
         if (typeof classes === "string") {
             _classes.push(classes);
         } else if (typeof classes === "object" && Array.isArray(classes)) {
-            classes = _classes.concat(classes);
+            _classes = _classes.concat(classes);
         }
 
         super(_classes);
