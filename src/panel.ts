@@ -8,15 +8,15 @@ export class Panel extends Div {
         let _classes = ['panel'];
         if (typeof classes === "string") {
             _classes.push(classes);
-        } else if (typeof classes === "object") {
-            _classes.concat(classes);
+        } else if (typeof classes === "object" && Array.isArray(classes)) {
+            classes = _classes.concat(classes);
         }
 
         super(_classes);
         this.title = title;
     }
 
-    getElement(): HTMLElement{
+    getElement(): HTMLElement {
         return super.getElement();
     }
 
@@ -28,7 +28,7 @@ export class Panel extends Div {
         super.clearChildren();
         super.addChild(component);
         let element = this.getElement();
-        if(element != null){
+        if (element != null) {
             element.innerHTML = "";
             super.addElement(component);
         }
@@ -41,7 +41,7 @@ export class Panel extends Div {
     append(component: Component) {
         super.addChild(component);
         let element = this.getElement();
-        if(element != null) {
+        if (element != null) {
             super.addElement(component);
         }
     };
