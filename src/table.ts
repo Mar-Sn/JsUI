@@ -1,3 +1,6 @@
+/// <reference path="@types/draggable.d.ts"/>
+/// <reference path="@types/trumbowyg.d.ts"/>
+
 import {Component} from "./component";
 import {Input} from "./input";
 import {CellType, TableAdapter} from "./table_adapter";
@@ -130,16 +133,7 @@ export class Table extends Component {
 
     private setDraggable() {
         if (super.domLoaded() && this.tableAdapter.rowCount() > 0) {
-            try {
-                //@ts-ignore
-                let ___ignore = Draggable;
-            } finally {
-
-            }
-            // @ts-ignore
-            let d = require("Draggable");
-
-            this.dragger = d(this.table, {
+            this.dragger = tableDragger(this.table, {
                 mode: 'row',
                 dragHandler: '.handle',
                 onlyBody: true,

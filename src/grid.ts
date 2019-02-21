@@ -1,17 +1,12 @@
-// @ts-ignore
-import {trumbowyg} from "trumbowyg";
+/// <reference path="@types/draggable.d.ts"/>
+/// <reference path="@types/trumbowyg.d.ts"/>
+
 import {Component} from "./component";
 import {TableComponent} from "./table_component";
 import {Div} from "./div";
 import {Input} from "./input";
 import {Button} from "./button";
 import {Popup} from "./popup";
-
-// @ts-ignore
-//let __trumbowyg = require("trumbowyg");
-
-// @ts-ignore
-let $: jQuery = require("jquery");
 
 
 export class Grid extends Component {
@@ -235,12 +230,6 @@ export class Grid extends Component {
         edit.addElement(amount);
         edit.addElement(close);
 
-        try {
-            // @ts-ignore
-            let ___ignore__ = new trumbowyg();
-        } catch (e) {
-            //ignore
-        }
 
         contentWrap.getElement().addEventListener("click", function () {
             let popup = new Popup('edit content', function () {
@@ -348,22 +337,16 @@ export class Grid extends Component {
 
     private setDraggable() {
         if (super.domLoaded() && this.rows.length > 0) {
-            try {
-                //@ts-ignore
-                let ___ignore = Draggable;
-            } finally {
+            if(this.gridElement == null) return;
 
-            }
-            // @ts-ignore
-            let d = require("Draggable");
-
-            this.dragger = d(this.gridElement, {
+            this.dragger = tableDragger(this.gridElement, {
                 mode: 'row',
                 dragHandler: '.handle',
                 onlyBody: true,
                 animation: 300
             });
             (function (parent: Grid) {
+                // @ts-ignore
                 parent.dragger.on('drop', function (from: number, to: number) {
                     from--;
                     to--;

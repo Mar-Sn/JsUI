@@ -42,7 +42,7 @@ gulp.task('copy-css', function (done) {
 
 gulp.task('scripts', function (done) {
 
-    return gulp.src("target/**/*.ts") // or tsProject.src()
+    return gulp.src("src/**/*.ts") // or tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject()).js
         .pipe(sourcemaps.write({includeContent: false}))

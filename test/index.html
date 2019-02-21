@@ -9,25 +9,28 @@
     <link rel="stylesheet" href="css/popup.css" type="text/css">
     <link rel="stylesheet" href="css/grid.css" type="text/css">
     <link rel="stylesheet" href="lib/libs/trumbowyg/dist/ui/trumbowyg.min.css">
+    <script type="application/javascript" src="lib/jquery.min.js"></script>
+    <script type="application/javascript" src="lib/libs/table-dragger/table-dragger.js"></script>
+    <script type="application/javascript" src="lib/libs/trumbowyg/dist/trumbowyg.js"></script>
+
     <script type="application/javascript" src="/lib/requirejs.js"></script>
     <script>
         require.config({
             baseUrl: '',
             paths: {
                 jquery: 'lib/jquery.min',
-                Draggable: 'lib/libs/table-dragger/table-dragger.min',
+                //Draggable: 'lib/libs/table-dragger/table-dragger.min',
                 Moments: 'lib/libs/moment-timezone/moment-timezone.min',
-                trumbowyg: 'lib/libs/trumbowyg/dist/trumbowyg.min',
+                //trumbowyg: 'lib/libs/trumbowyg/dist/trumbowyg.min',
                 Test: 'test'
-            },
+            }/*,
             shim: {
                 'trumbowyg': {
                     deps: ['jquery'],
                     exports: 'trumbowyg'
                 }
-            }
+            }*/
         });
-
         require(['Test'],
             function (Test) {
                 new Test.Test();
